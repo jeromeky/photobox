@@ -5,6 +5,9 @@ from django.conf.urls import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+
+	(r'^gallery/$', 'gallery.views.homepage')
+
     # Examples:
     # url(r'^$', 'photobox.views.home', name='home'),
     # url(r'^photobox/', include('photobox.foo.urls')),
