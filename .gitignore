@@ -4,3 +4,7 @@ dist
 build
 .DS_Store
 docs/_build
+*.log
+*.pot
+*.pyc
+local_settings.py
