@@ -1,0 +1,11 @@
+{% extends "skeleton.html" %}
+
+{% block content %}
+<h2>Ceci est la page d'accueil de l'application</h2>
+<script>
+function my_js_callback(data){
+    alert(data.message);
+}
+</script>
+<input type="button" onclick="Dajaxice.gallery.sayhello(my_js_callback);" value="Get message from server!">
+{% endblock %}
