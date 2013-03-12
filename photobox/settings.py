@@ -79,18 +79,13 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-<<<<<<< HEAD
     'dajaxice.finders.DajaxiceFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 DAJAXICE_MEDIA_PREFIX="dajaxice"
 
-=======
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-)
 
->>>>>>> f715e753603240d8fed0f91470ddbb0ca7c87d8b
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '&g87j1hbz&k3j-%bmk-)&l(nr5g&ox)qi!nub+vt97jp#8q06@'
 
@@ -98,11 +93,7 @@ SECRET_KEY = '&g87j1hbz&k3j-%bmk-)&l(nr5g&ox)qi!nub+vt97jp#8q06@'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-<<<<<<< HEAD
     'django.template.loaders.eggs.Loader',
-=======
-#     'django.template.loaders.eggs.Loader',
->>>>>>> f715e753603240d8fed0f91470ddbb0ca7c87d8b
 )
 
 MIDDLEWARE_CLASSES = (
@@ -134,11 +125,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-<<<<<<< HEAD
     'dajaxice',
     'gallery',
-=======
->>>>>>> f715e753603240d8fed0f91470ddbb0ca7c87d8b
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
