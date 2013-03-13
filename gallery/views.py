@@ -11,4 +11,4 @@ def homepage(request):
 			dossiers.append(path)
 		else: 
 			fichiers.append(path)
-	return render_to_response('index.html', {'data','data'})
+	return render_to_response('index.html', {'dossiers':dossiers, 'fichiers':fichiers})

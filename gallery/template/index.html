@@ -7,6 +7,13 @@ function my_js_callback(data){
     alert(data.message);
 }
 </script>
-<img src="/media/google_maps_icon.png"/>
+{%for dossier in dossiers%}
+{{dossier}}
+{%endfor%}
+<br/>
+{%for fichier in fichiers%}
+<img src="{{fichier}}"/>
+{%endfor%}
+
 <input type="button" onclick="Dajaxice.gallery.sayhello(my_js_callback);" value="Get message from server!">
 {% endblock %}
