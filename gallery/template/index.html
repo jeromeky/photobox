@@ -1,19 +1,25 @@
 {% extends "skeleton.html" %}
 
 {% block content %}
-<h2>Ceci est la page d'accueil de l'application</h2>
 <script>
 function my_js_callback(data){
-    alert(data.message);
+    $('#images').html('');
+    $.each(data.fichiers, function(index, value){
+	$('#images').append("<img src='"+value+"'/>");
+    });
 }
 </script>
 {%for dossier in dossiers%}
-{{dossier}}
+<a href="#" onclick="Dajaxice.gallery.searchFilesInFolder(my_js_callback, {'folder':'{{dossier}}'});">{{dossier}}</a>
+<br/>
 {%endfor%}
 <br/>
+
+<div id="images">
+
+</div>
 {%for fichier in fichiers%}
 <img src="{{fichier}}"/>
 {%endfor%}
 
-<input type="button" onclick="Dajaxice.gallery.sayhello(my_js_callback);" value="Get message from server!">
 {% endblock %}
