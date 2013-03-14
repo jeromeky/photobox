@@ -6,7 +6,7 @@ import os.path
 def homepage(request):
 	folders=[]
 	images=[]
-	for path in glob.glob('/media/*'):
+	for path in glob.glob('/media/images/normal/*'):
 		if(os.path.isdir(path)):
 			folders.append(path)
 		else: 
