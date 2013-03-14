@@ -22,14 +22,18 @@ function refreshImagesAndFolders(data){
             $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+value+"&apos;)'>"+folderPath+"</a></li>");
         });
     }
+    
     $('#images').html('');
     $.each(data.images, function(index, value){
         thumbImage = value.replace('/media/images/normal/','/media/images/thumbnail/');
         $('#images').append("<a href='"+value+"' rel='prettyPhoto[portfolio]'> <img src='"+thumbImage+"'/></a>");
     });
-    currentPath = data.currentPath.replace('/', '');
+    
+    currentPath = data.currentPath.replace('{{imagesPath}}', '');
+    
     listPathAriane = currentPath.split('/');
-    fileArianePath="";
+
+    fileArianePath="{{imagesPath}}";
     $('#filariane').html('');
     $.each(listPathAriane, function(index, value){
 	if(index < listPathAriane.length - 1 ){
@@ -39,11 +43,11 @@ function refreshImagesAndFolders(data){
 	    $('#filariane').append(" "+value);
     });
 
-  $(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
-    theme:'light_square',
-    autoplay_slideshow: false,
-    overlay_gallery: false
-  });
+	$(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
+		theme:'light_square',
+		autoplay_slideshow: false,
+		overlay_gallery: false
+	});
 
 }
 </script>
