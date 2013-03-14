@@ -28,13 +28,13 @@ function refreshImagesAndFolders(data){
     });
     currentPath = data.currentPath.replace('/', '');
     listPathAriane = currentPath.split('/');
-    fileArianePath="/";
+    fileArianePath="";
     $('#filariane').html('');
     $.each(listPathAriane, function(index, value){
-        fileArianePath+=(value+"/");
-	if(index < listPathAriane.length - 1 )
+	if(index < listPathAriane.length - 1 ){
+	    fileArianePath+="/" + value;
 	    $('#filariane').append("<a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+fileArianePath+"&apos;)'>"+value+"</a>").append(" / ");
-        else 
+	}else 
 	    $('#filariane').append(" "+value);
     });
 
