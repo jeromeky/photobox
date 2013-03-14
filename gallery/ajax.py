@@ -2,6 +2,7 @@
 
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
+from django.conf import settings
 import glob
 import os.path
 

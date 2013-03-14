@@ -5,7 +5,7 @@
 
 $(document).ready(function(){
 
-Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':'/media'});
+    Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':'{{imagesPath}}'});
 
 
 });
@@ -15,16 +15,17 @@ function ajaxRequestRefreshImagesAndFolders(path){
 }
 
 function refreshImagesAndFolders(data){
-    
     $('#folders').html('');
     if(data.folders.length>0){
         $.each(data.folders, function(index, value){
-            $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+value+"&apos;)'>"+value+"</a></li>");
+	        folderPath = value.replace(data.currentPath + "/", '');
+            $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+value+"&apos;)'>"+folderPath+"</a></li>");
         });
     }
     $('#images').html('');
     $.each(data.images, function(index, value){
-        $('#images').append("<img src='"+value+"'/>");
+        thumbImage = value.replace('/media/images/normal/','/media/images/thumbnail/');
+        $('#images').append("<a href='"+value+"' rel='prettyPhoto[portfolio]'> <img src='"+thumbImage+"'/></a>");
     });
     currentPath = data.currentPath.replace('/', '');
     listPathAriane = currentPath.split('/');
@@ -38,9 +39,15 @@ function refreshImagesAndFolders(data){
 	    $('#filariane').append(" "+value);
     });
 
+  $(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
+    theme:'light_square',
+    autoplay_slideshow: false,
+    overlay_gallery: false
+  });
+
 }
 </script>
 <div id="filariane"></div>
 <ul id="folders"></ul>
-<div id="images"></div>
+<div id="images" class="portfolio"></div>
 {% endblock %}

@@ -57,6 +57,8 @@ MEDIA_ROOT = '/media/'
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
 
+MEDIA_IMAGES = '/media/images/normal'
+
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
@@ -73,6 +75,7 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/Applications/Django-1.5/photobox/gallery/static',
+    '/usr/local/Django-1.5/photobox/gallery/static',
 )
 
 # List of finder classes that know how to find static files in
