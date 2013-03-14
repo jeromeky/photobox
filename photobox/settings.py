@@ -83,8 +83,6 @@ STATICFILES_FINDERS = (
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
-DAJAXICE_MEDIA_PREFIX="dajaxice"
-
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '&g87j1hbz&k3j-%bmk-)&l(nr5g&ox)qi!nub+vt97jp#8q06@'

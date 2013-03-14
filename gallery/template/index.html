@@ -2,24 +2,45 @@
 
 {% block content %}
 <script>
-function my_js_callback(data){
+
+$(document).ready(function(){
+
+Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':'/media'});
+
+
+});
+
+function ajaxRequestRefreshImagesAndFolders(path){
+    Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':path});
+}
+
+function refreshImagesAndFolders(data){
+    
+    $('#folders').html('');
+    if(data.folders.length>0){
+        $.each(data.folders, function(index, value){
+            $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+value+"&apos;)'>"+value+"</a></li>");
+        });
+    }
     $('#images').html('');
-    $.each(data.fichiers, function(index, value){
-	$('#images').append("<img src='"+value+"'/>");
+    $.each(data.images, function(index, value){
+        $('#images').append("<img src='"+value+"'/>");
     });
+    currentPath = data.currentPath.replace('/', '');
+    listPathAriane = currentPath.split('/');
+    fileArianePath="/";
+    $('#filariane').html('');
+    $.each(listPathAriane, function(index, value){
+        fileArianePath+=(value+"/");
+	if(index < listPathAriane.length - 1 )
+	    $('#filariane').append("<a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+fileArianePath+"&apos;)'>"+value+"</a>").append(" / ");
+        else 
+	    $('#filariane').append(" "+value);
+    });
+
 }
 </script>
-{%for dossier in dossiers%}
-<a href="#" onclick="Dajaxice.gallery.searchFilesInFolder(my_js_callback, {'folder':'{{dossier}}'});">{{dossier}}</a>
-<br/>
-{%endfor%}
-<br/>
-
-<div id="images">
-
-</div>
-{%for fichier in fichiers%}
-<img src="{{fichier}}"/>
-{%endfor%}
-
+<div id="filariane"></div>
+<ul id="folders"></ul>
+<div id="images"></div>
 {% endblock %}

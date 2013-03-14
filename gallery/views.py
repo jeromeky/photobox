@@ -4,11 +4,11 @@ import glob
 import os.path 
 
 def homepage(request):
-	dossiers=[]
-	fichiers=[]
+	folders=[]
+	images=[]
 	for path in glob.glob('/media/*'):
 		if(os.path.isdir(path)):
-			dossiers.append(path)
+			folders.append(path)
 		else: 
-			fichiers.append(path)
-	return render_to_response('index.html', {'dossiers':dossiers, 'fichiers':fichiers})
+			images.append(path)
+	return render_to_response('index.html', {'folders':folders, 'images':images})

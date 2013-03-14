@@ -6,13 +6,13 @@ import glob
 import os.path
 
 @dajaxice_register(method='GET')
-def searchFilesInFolder(request, folder):
-	dossiers=[]
-	fichiers=[]
-	for path in glob.glob(folder+'/*'):
-		if(os.path.isdir(path)):
-			dossiers.append(path)
+def searchFilesInFolder(request, pathFolder):
+	folders=[]
+	images=[]
+	for loopPath in glob.glob(pathFolder+'/*'):
+		if(os.path.isdir(loopPath)):
+			folders.append(loopPath)
 		else:
-			fichiers.append(path)
+			images.append(loopPath)
 
-	return simplejson.dumps({'message':'Hello World', 'dossiers':dossiers, 'fichiers':fichiers})
+	return simplejson.dumps({'folders':folders, 'images':images, 'currentPath' : pathFolder})
