@@ -1,1 +1,3 @@
 *.pyc
+photobox/settings.py
+gallery/template/media/

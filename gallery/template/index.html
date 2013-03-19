@@ -15,6 +15,16 @@ function ajaxRequestRefreshImagesAndFolders(path){
 }
 
 function refreshImagesAndFolders(data){
+
+	console.log(data);
+
+	$('#folders').html('');
+    for (var loopFolderKey in data.mapFolders){
+	    $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+data.mapFolders[loopFolderKey]+"&apos;)'>"+loopFolderKey+"</a></li>");
+    }
+
+	/*
+	
     $('#folders').html('');
     if(data.folders.length>0){
         $.each(data.folders, function(index, value){
@@ -22,27 +32,51 @@ function refreshImagesAndFolders(data){
             $('#folders').append("<li><a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+value+"&apos;)'>"+folderPath+"</a></li>");
         });
     }
+    */
     
+    
+    $('#images').html('');
+    for (var loopImageKey in data.mapImages){
+        $('#images').append("<a href='"+data.mapImages[loopImageKey]+"' rel='prettyPhoto[portfolio]'> <img src='"+loopImageKey+"'/></a>");
+    }
+
+    
+    /*
     $('#images').html('');
     $.each(data.images, function(index, value){
         thumbImage = value.replace('/media/images/normal/','/media/images/thumbnail/');
         $('#images').append("<a href='"+value+"' rel='prettyPhoto[portfolio]'> <img src='"+thumbImage+"'/></a>");
     });
+    */
+    
+    
+	$('#breadcrumb').html('');
+    for (var loopBreadcrumbKey in data.mapBreadcrumb){
+    	if(data.mapBreadcrumb[loopBreadcrumbKey] != '')
+		    $('#breadcrumb').append("<a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+data.mapBreadcrumb[loopBreadcrumbKey]+"&apos;)'>"+loopBreadcrumbKey+"</a>").append( " / ");
+		else
+			$('#breadcrumb').append(loopBreadcrumbKey);
+    }
+
+
+    /*
     
     currentPath = data.currentPath.replace('{{imagesPath}}', '');
     
     listPathAriane = currentPath.split('/');
-
+    
     fileArianePath="{{imagesPath}}";
-    $('#filariane').html('');
+    $('#breadcrumb').html('/');
+
     $.each(listPathAriane, function(index, value){
-	if(index < listPathAriane.length - 1 ){
-	    fileArianePath+="/" + value;
-	    $('#filariane').append("<a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+fileArianePath+"&apos;)'>"+value+"</a>").append(" / ");
-	}else 
-	    $('#filariane').append(" "+value);
+		if(index < listPathAriane.length - 1 ){
+		    fileArianePath+="/" + value;
+		    $('#breadcrumb').append("<a href='#' onclick='ajaxRequestRefreshImagesAndFolders(&apos;"+fileArianePath+"&apos;)'>"+value+"</a>").append(" / ");
+		}else 
+		    $('#breadcrumb').append(" "+value);
     });
 
+    */
 	$(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
 		theme:'light_square',
 		autoplay_slideshow: false,
@@ -51,7 +85,7 @@ function refreshImagesAndFolders(data){
 
 }
 </script>
-<div id="filariane"></div>
+<div id="breadcrumb"></div>
 <ul id="folders"></ul>
 <div id="images" class="portfolio"></div>
 {% endblock %}
