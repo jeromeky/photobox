@@ -1,3 +1,11 @@
 {%for key, value in images.items%}
 	<a href="{{value}}" rel='prettyPhoto[portfolio]'> <img src="{{key}}"/></a>
 {%endfor%}
+
+<script type="text/javascript">
+	$(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
+		theme:'light_square',
+		autoplay_slideshow: false,
+		overlay_gallery: false
+	});
+</script>
