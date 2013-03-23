@@ -5,10 +5,20 @@
 
 $(document).ready(function(){
 
-    Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':'{{imagesPath}}'});
+//  Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':'{{imagesPath}}'});
 
+    Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':'{{imagesPath}}'});
+    Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':'{{imagesPath}}'});
 
 });
+
+function refreshPage(path){
+    Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':path});
+    Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':path});
+    
+
+
+}
 
 function ajaxRequestRefreshImagesAndFolders(path){
     Dajaxice.gallery.searchFilesInFolder(refreshImagesAndFolders, {'pathFolder':path});
