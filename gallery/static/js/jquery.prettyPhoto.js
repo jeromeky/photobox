@@ -2,20 +2,22 @@
 	Class: prettyPhoto
 	Use: Lightbox clone for jQuery
 	Author: Stephane Caron (http://www.no-margin-for-errors.com)
-	Version: 3.1
+	Version: 3.1.5
 ------------------------------------------------------------------------- */
-
 (function($) {
-	$.prettyPhoto = {version: '3.1'};
+	$.prettyPhoto = {version: '3.1.5'};
 	
 	$.fn.prettyPhoto = function(pp_settings) {
 		pp_settings = jQuery.extend({
+			hook: 'rel', /* the attribute tag to use for prettyPhoto hooks. default: 'rel'. For HTML5, use "data-rel" or similar. */
 			animation_speed: 'fast', /* fast/slow/normal */
+			ajaxcallback: function() {},
 			slideshow: 5000, /* false OR interval time in ms */
 			autoplay_slideshow: false, /* true/false */
 			opacity: 0.80, /* Value between 0 and 1 */
 			show_title: true, /* true/false */
 			allow_resize: true, /* Resize the photos bigger than viewport. true/false */
+			allow_expand: true, /* Allow the user to expand a resized image. true/false */
 			default_width: 500,
 			default_height: 344,
 			counter_separator_label: '/', /* The separator for the gallery counter 1 "of" 2 */
@@ -25,7 +27,9 @@
 			wmode: 'opaque', /* Set the flash wmode attribute */
 			autoplay: true, /* Automatically start videos: True/False */
 			modal: false, /* If set to true, only the close button will close the window */
+			deeplinking: true, /* Allow prettyPhoto to update the url to enable deeplinking. */
 			overlay_gallery: true, /* If set to true, a gallery will overlay the fullscreen image on mouse over */
+			overlay_gallery_max: 30, /* Maximum number of pictures in the overlay gallery */
 			keyboard_shortcuts: true, /* Set to false if you open forms inside prettyPhoto */
 			changepicturecallback: function(){}, /* Called everytime an item is shown/changed */
 			callback: function(){}, /* Called when prettyPhoto is closed */
@@ -56,6 +60,7 @@
 												<a href="#" class="pp_arrow_next">Next</a> \
 											</div> \
 											<p class="pp_description"></p> \
+											<div class="pp_social">{pp_social}</div> \
 											<a class="pp_close" href="#">Close</a> \
 										</div> \
 									</div> \
@@ -84,7 +89,8 @@
 			quicktime_markup: '<object classid="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" codebase="http://www.apple.com/qtactivex/qtplugin.cab" height="{height}" width="{width}"><param name="src" value="{path}"><param name="autoplay" value="{autoplay}"><param name="type" value="video/quicktime"><embed src="{path}" height="{height}" width="{width}" autoplay="{autoplay}" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/download/"></embed></object>',
 			iframe_markup: '<iframe src ="{path}" width="{width}" height="{height}" frameborder="no"></iframe>',
 			inline_markup: '<div class="pp_inline">{content}</div>',
-			custom_markup: ''
+			custom_markup: '',
+			social_tools: '<div class="twitter"><a href="http://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script></div><div class="facebook"><iframe src="//www.facebook.com/plugins/like.php?locale=en_US&href={location_href}&amp;layout=button_count&amp;show_faces=true&amp;width=500&amp;action=like&amp;font&amp;colorscheme=light&amp;height=23" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:500px; height:23px;" allowTransparency="true"></iframe></div>' /* html or false to disable */
 		}, pp_settings);
 		
 		// Global variables accessible only by prettyPhoto
@@ -127,29 +133,31 @@
 					};
 				};
 			});
-		}
-		
+		};
 		
 		/**
 		* Initialize prettyPhoto.
 		*/
 		$.prettyPhoto.initialize = function() {
+			
 			settings = pp_settings;
 			
 			if(settings.theme == 'pp_default') settings.horizontal_padding = 16;
-			if(settings.ie6_fallback && $.browser.msie && parseInt($.browser.version) == 6) settings.theme = "light_square"; // Fallback to a supported theme for IE6
 			
 			// Find out if the picture is part of a set
-			theRel = $(this).attr('rel');
+			theRel = $(this).attr(settings.hook);
 			galleryRegExp = /\[(?:.*)\]/;
 			isSet = (galleryRegExp.exec(theRel)) ? true : false;
 			
 			// Put the SRCs, TITLEs, ALTs into an array.
-			pp_images = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr('rel').indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
-			pp_titles = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr('rel').indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
-			pp_descriptions = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr('rel').indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
+			pp_images = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return $(n).attr('href'); }) : $.makeArray($(this).attr('href'));
+			pp_titles = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).find('img').attr('alt')) ? $(n).find('img').attr('alt') : ""; }) : $.makeArray($(this).find('img').attr('alt'));
+			pp_descriptions = (isSet) ? jQuery.map(matchedObjects, function(n, i){ if($(n).attr(settings.hook).indexOf(theRel) != -1) return ($(n).attr('title')) ? $(n).attr('title') : ""; }) : $.makeArray($(this).attr('title'));
+			
+			if(pp_images.length > settings.overlay_gallery_max) settings.overlay_gallery = false;
 			
 			set_position = jQuery.inArray($(this).attr('href'), pp_images); // Define where in the array the clicked item is positionned
+			rel_index = (isSet) ? set_position : $("a["+settings.hook+"^='"+theRel+"']").index($(this));
 			
 			_build_overlay(this); // Build the overlay {this} being the caller
 			
@@ -172,23 +180,29 @@
 		$.prettyPhoto.open = function(event) {
 			if(typeof settings == "undefined"){ // Means it's an API call, need to manually get the settings and set the variables
 				settings = pp_settings;
-				if($.browser.msie && $.browser.version == 6) settings.theme = "light_square"; // Fallback to a supported theme for IE6
 				pp_images = $.makeArray(arguments[0]);
 				pp_titles = (arguments[1]) ? $.makeArray(arguments[1]) : $.makeArray("");
 				pp_descriptions = (arguments[2]) ? $.makeArray(arguments[2]) : $.makeArray("");
 				isSet = (pp_images.length > 1) ? true : false;
-				set_position = 0;
+				set_position = (arguments[3])? arguments[3]: 0;
 				_build_overlay(event.target); // Build the overlay {this} being the caller
 			}
-
-			if($.browser.msie && $.browser.version == 6) $('select').css('visibility','hidden'); // To fix the bug with IE select boxes
 			
-			if(settings.hideflash) $('object,embed').css('visibility','hidden'); // Hide the flash
+			if(settings.hideflash) $('object,embed,iframe[src*=youtube],iframe[src*=vimeo]').css('visibility','hidden'); // Hide the flash
 
 			_checkPosition($(pp_images).size()); // Hide the next/previous links if on first or last images.
 		
 			$('.pp_loaderIcon').show();
 		
+			if(settings.deeplinking)
+				setHashtag();
+		
+			// Rebuild Facebook Like Button with updated href
+			if(settings.social_tools){
+				facebook_like_link = settings.social_tools.replace('{location_href}', encodeURIComponent(location.href)); 
+				$pp_pic_holder.find('.pp_social').html(facebook_like_link);
+			}
+			
 			// Fade the content in
 			if($ppt.is(':hidden')) $ppt.css('opacity',0).show();
 			$pp_overlay.show().fadeTo(settings.animation_speed,settings.opacity);
@@ -197,13 +211,18 @@
 			$pp_pic_holder.find('.currentTextHolder').text((set_position+1) + settings.counter_separator_label + $(pp_images).size());
 
 			// Set the description
-			$pp_pic_holder.find('.pp_description').show().html(unescape(pp_descriptions[set_position]));
+			if(typeof pp_descriptions[set_position] != 'undefined' && pp_descriptions[set_position] != ""){
+				$pp_pic_holder.find('.pp_description').show().html(unescape(pp_descriptions[set_position]));
+			}else{
+				$pp_pic_holder.find('.pp_description').hide();
+			}
 			
 			// Get the dimensions
-			movie_width = ( parseFloat(grab_param('width',pp_images[set_position])) ) ? grab_param('width',pp_images[set_position]) : settings.default_width.toString();
-			movie_height = ( parseFloat(grab_param('height',pp_images[set_position])) ) ? grab_param('height',pp_images[set_position]) : settings.default_height.toString();
+			movie_width = ( parseFloat(getParam('width',pp_images[set_position])) ) ? getParam('width',pp_images[set_position]) : settings.default_width.toString();
+			movie_height = ( parseFloat(getParam('height',pp_images[set_position])) ) ? getParam('height',pp_images[set_position]) : settings.default_height.toString();
 			
 			// If the size is % based, calculate according to window dimensions
+			percentBased=false;
 			if(movie_height.indexOf('%') != -1) { movie_height = parseFloat(($(window).height() * parseFloat(movie_height) / 100) - 150); percentBased = true; }
 			if(movie_width.indexOf('%') != -1) { movie_width = parseFloat(($(window).width() * parseFloat(movie_width) / 100) - 150); percentBased = true; }
 			
@@ -245,9 +264,25 @@
 				
 					case 'youtube':
 						pp_dimensions = _fitToViewport(movie_width,movie_height); // Fit item to viewport
+						
+						// Regular youtube link
+						movie_id = getParam('v',pp_images[set_position]);
+						
+						// youtu.be link
+						if(movie_id == ""){
+							movie_id = pp_images[set_position].split('youtu.be/');
+							movie_id = movie_id[1];
+							if(movie_id.indexOf('?') > 0)
+								movie_id = movie_id.substr(0,movie_id.indexOf('?')); // Strip anything after the ?
 
-						movie = 'http://www.youtube.com/embed/'+grab_param('v',pp_images[set_position]);
-						if(settings.autoplay) movie += "?autoplay=1";
+							if(movie_id.indexOf('&') > 0)
+								movie_id = movie_id.substr(0,movie_id.indexOf('&')); // Strip anything after the &
+						}
+
+						movie = 'http://www.youtube.com/embed/'+movie_id;
+						(getParam('rel',pp_images[set_position])) ? movie+="?rel="+getParam('rel',pp_images[set_position]) : movie+="?rel=1";
+							
+						if(settings.autoplay) movie += "&autoplay=1";
 					
 						toInject = settings.iframe_markup.replace(/{width}/g,pp_dimensions['width']).replace(/{height}/g,pp_dimensions['height']).replace(/{wmode}/g,settings.wmode).replace(/{path}/g,movie);
 					break;
@@ -256,10 +291,10 @@
 						pp_dimensions = _fitToViewport(movie_width,movie_height); // Fit item to viewport
 					
 						movie_id = pp_images[set_position];
-						var regExp = /http:\/\/(www\.)?vimeo.com\/(\d+)/;
+						var regExp = /http(s?):\/\/(www\.)?vimeo.com\/(\d+)/;
 						var match = movie_id.match(regExp);
 						
-						movie = 'http://player.vimeo.com/video/'+ match[2] +'?title=0&amp;byline=0&amp;portrait=0';
+						movie = 'http://player.vimeo.com/video/'+ match[3] +'?title=0&amp;byline=0&amp;portrait=0';
 						if(settings.autoplay) movie += "&autoplay=1;";
 				
 						vimeo_width = pp_dimensions['width'] + '/embed/?moog_width='+ pp_dimensions['width'];
@@ -347,20 +382,20 @@
 			
 			if(direction == 'previous') {
 				set_position--;
-				if (set_position < 0){
-					set_position = $(pp_images).size()-1;
-				};
+				if (set_position < 0) set_position = $(pp_images).size()-1;
 			}else if(direction == 'next'){
 				set_position++;
-				if(set_position > $(pp_images).size()-1) {
-					set_position = 0;
-				}
+				if(set_position > $(pp_images).size()-1) set_position = 0;
 			}else{
 				set_position=direction;
 			};
+			
+			rel_index = set_position;
 
 			if(!doresize) doresize = true; // Allow the resizing of the images
-			$('.pp_contract').removeClass('pp_contract').addClass('pp_expand');
+			if(settings.allow_expand) {
+				$('.pp_contract').removeClass('pp_contract').addClass('pp_expand');
+			}
 
 			_hideContent(function(){ $.prettyPhoto.open(); });
 		};
@@ -374,28 +409,18 @@
 			if(direction=='next'){
 				currentGalleryPage ++;
 
-				if(currentGalleryPage > totalPage){
-					currentGalleryPage = 0;
-				};
-				
-				slide_speed = settings.animation_speed;
+				if(currentGalleryPage > totalPage) currentGalleryPage = 0;
 			}else if(direction=='previous'){
 				currentGalleryPage --;
 
-				if(currentGalleryPage < 0){
-					currentGalleryPage = totalPage;
-				};
-				
-				slide_speed = settings.animation_speed;
+				if(currentGalleryPage < 0) currentGalleryPage = totalPage;
 			}else{
 				currentGalleryPage = direction;
-				slide_speed = 0;
 			};
+			
+			slide_speed = (direction == 'next' || direction == 'previous') ? settings.animation_speed : 0;
 
 			slide_to = currentGalleryPage * (itemsPerPage * itemWidth);
-
-			// Slide the pages, if we're on the last page, find out how many items we need to slide. To make sure we don't have an empty space.
-			itemsToSlide = (currentGalleryPage == totalPage) ? pp_images.length - ((totalPage) * itemsPerPage) : itemsPerPage;
 
 			$pp_gallery.find('ul').animate({left:-slide_to},slide_speed);
 		};
@@ -443,13 +468,14 @@
 			$('div.pp_pic_holder,div.ppt,.pp_fade').fadeOut(settings.animation_speed,function(){ $(this).remove(); });
 			
 			$pp_overlay.fadeOut(settings.animation_speed, function(){
-				if($.browser.msie && $.browser.version == 6) $('select').css('visibility','visible'); // To fix the bug with IE select boxes
 				
-				if(settings.hideflash) $('object,embed').css('visibility','visible'); // Show the flash
+				if(settings.hideflash) $('object,embed,iframe[src*=youtube],iframe[src*=vimeo]').css('visibility','visible'); // Show the flash
 				
 				$(this).remove(); // No more need for the prettyPhoto markup
 				
 				$(window).unbind('scroll.prettyphoto');
+				
+				clearHashtag();
 				
 				settings.callback();
 				
@@ -466,12 +492,12 @@
 		*/
 		function _showContent(){
 			$('.pp_loaderIcon').hide();
-			
-			$ppt.fadeTo(settings.animation_speed,1);
 
 			// Calculate the opened top position of the pic holder
 			projectedTop = scroll_pos['scrollTop'] + ((windowHeight/2) - (pp_dimensions['containerHeight']/2));
 			if(projectedTop < 0) projectedTop = 0;
+
+			$ppt.fadeTo(settings.animation_speed,1);
 
 			// Resize the content holder
 			$pp_pic_holder.find('.pp_content')
@@ -483,7 +509,7 @@
 			// Resize picture the holder
 			$pp_pic_holder.animate({
 				'top': projectedTop,
-				'left': (windowWidth/2) - (pp_dimensions['containerWidth']/2),
+				'left': ((windowWidth/2) - (pp_dimensions['containerWidth']/2) < 0) ? 0 : (windowWidth/2) - (pp_dimensions['containerWidth']/2),
 				width:pp_dimensions['containerWidth']
 			},settings.animation_speed,function(){
 				$pp_pic_holder.find('.pp_hoverContainer,#fullResImage').height(pp_dimensions['height']).width(pp_dimensions['width']);
@@ -493,10 +519,12 @@
 				// Show the nav
 				if(isSet && _getFileType(pp_images[set_position])=="image") { $pp_pic_holder.find('.pp_hoverContainer').show(); }else{ $pp_pic_holder.find('.pp_hoverContainer').hide(); }
 			
-				if(pp_dimensions['resized']){ // Fade the resizing link if the image is resized
-					$('a.pp_expand,a.pp_contract').show();
-				}else{
-					$('a.pp_expand').hide();
+				if(settings.allow_expand) {
+					if(pp_dimensions['resized']){ // Fade the resizing link if the image is resized
+						$('a.pp_expand,a.pp_contract').show();
+					}else{
+						$('a.pp_expand').hide();
+					}
 				}
 				
 				if(settings.autoplay_slideshow && !pp_slideshow && !pp_open) $.prettyPhoto.startSlideshow();
@@ -507,6 +535,7 @@
 			});
 			
 			_insert_gallery();
+			pp_settings.ajaxcallback();
 		};
 		
 		/**
@@ -561,15 +590,15 @@
 					pp_containerHeight = imageHeight, pp_containerWidth = imageWidth;
 				};
 			
-				_getDimensions(imageWidth,imageHeight);
+
 				
 				if((pp_containerWidth > windowWidth) || (pp_containerHeight > windowHeight)){
 					_fitToViewport(pp_containerWidth,pp_containerHeight)
 				};
+				
+				_getDimensions(imageWidth,imageHeight);
 			};
 			
-			
-
 			return {
 				width:Math.floor(imageWidth),
 				height:Math.floor(imageHeight),
@@ -601,7 +630,6 @@
 			});
 			detailsHeight += $pp_details.height();
 			detailsHeight = (detailsHeight <= 34) ? 36 : detailsHeight; // Min-height for the details
-			if($.browser.msie && $.browser.version==7) detailsHeight+=8;
 			$pp_details.remove();
 			
 			// Get the titles height, to do so, I need to clone it since it's invisible
@@ -623,7 +651,7 @@
 		}
 	
 		function _getFileType(itemSrc){
-			if (itemSrc.match(/youtube\.com\/watch/i)) {
+			if (itemSrc.match(/youtube\.com\/watch/i) || itemSrc.match(/youtu\.be/i)) {
 				return 'youtube';
 			}else if (itemSrc.match(/vimeo\.com/i)) {
 				return 'vimeo';
@@ -679,7 +707,7 @@
 		};
 	
 		function _insert_gallery(){
-			if(isSet && settings.overlay_gallery && _getFileType(pp_images[set_position])=="image" && (settings.ie6_fallback && !($.browser.msie && parseInt($.browser.version) == 6))) {
+			if(isSet && settings.overlay_gallery && _getFileType(pp_images[set_position])=="image") {
 				itemWidth = 52+5; // 52 beign the thumb width, 5 being the right margin.
 				navWidth = (settings.theme == "facebook" || settings.theme == "pp_default") ? 50 : 30; // Define the arrow width depending on the theme
 				
@@ -717,6 +745,11 @@
 		}
 	
 		function _build_overlay(caller){
+			// Inject Social Tool markup into General markup
+			if(settings.social_tools)
+				facebook_like_link = settings.social_tools.replace('{location_href}', encodeURIComponent(location.href)); 
+
+			settings.markup = settings.markup.replace('{pp_social}',''); 
 			
 			$('body').append(settings.markup); // Inject the markup
 			
@@ -799,20 +832,23 @@
 
 			$('a.pp_close').bind('click',function(){ $.prettyPhoto.close(); return false; });
 
-			$('a.pp_expand').bind('click',function(e){
-				// Expand the image
-				if($(this).hasClass('pp_expand')){
-					$(this).removeClass('pp_expand').addClass('pp_contract');
-					doresize = false;
-				}else{
-					$(this).removeClass('pp_contract').addClass('pp_expand');
-					doresize = true;
-				};
+
+			if(settings.allow_expand) {
+				$('a.pp_expand').bind('click',function(e){
+					// Expand the image
+					if($(this).hasClass('pp_expand')){
+						$(this).removeClass('pp_expand').addClass('pp_contract');
+						doresize = false;
+					}else{
+						$(this).removeClass('pp_contract').addClass('pp_expand');
+						doresize = true;
+					};
+				
+					_hideContent(function(){ $.prettyPhoto.open(); });
 			
-				_hideContent(function(){ $.prettyPhoto.open(); });
-		
-				return false;
-			});
+					return false;
+				});
+			}
 		
 			$pp_pic_holder.find('.pp_previous, .pp_nav .pp_arrow_previous').bind('click',function(){
 				$.prettyPhoto.changePage('previous');
@@ -828,11 +864,41 @@
 			
 			_center_overlay(); // Center it
 		};
+
+		if(!pp_alreadyInitialized && getHashtag()){
+			pp_alreadyInitialized = true;
+			
+			// Grab the rel index to trigger the click on the correct element
+			hashIndex = getHashtag();
+			hashRel = hashIndex;
+			hashIndex = hashIndex.substring(hashIndex.indexOf('/')+1,hashIndex.length-1);
+			hashRel = hashRel.substring(0,hashRel.indexOf('/'));
+
+			// Little timeout to make sure all the prettyPhoto initialize scripts has been run.
+			// Useful in the event the page contain several init scripts.
+			setTimeout(function(){ $("a["+pp_settings.hook+"^='"+hashRel+"']:eq("+hashIndex+")").trigger('click'); },50);
+		}
 		
 		return this.unbind('click.prettyphoto').bind('click.prettyphoto',$.prettyPhoto.initialize); // Return the jQuery object for chaining. The unbind method is used to avoid click conflict when the plugin is called more than once
 	};
 	
-	function grab_param(name,url){
+	function getHashtag(){
+		var url = location.href;
+		hashtag = (url.indexOf('#prettyPhoto') !== -1) ? decodeURI(url.substring(url.indexOf('#prettyPhoto')+1,url.length)) : false;
+
+		return hashtag;
+	};
+	
+	function setHashtag(){
+		if(typeof theRel == 'undefined') return; // theRel is set on normal calls, it's impossible to deeplink using the API
+		location.hash = theRel + '/'+rel_index+'/';
+	};
+	
+	function clearHashtag(){
+		if ( location.href.indexOf('#prettyPhoto') !== -1 ) location.hash = "prettyPhoto";
+	}
+	
+	function getParam(name,url){
 	  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
 	  var regexS = "[\\?&]"+name+"=([^&#]*)";
 	  var regex = new RegExp( regexS );
@@ -841,3 +907,5 @@
 	}
 	
 })(jQuery);
+
+var pp_alreadyInitialized = false; // Used for the deep linking to make sure not to call the same function several times.

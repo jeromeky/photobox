@@ -1,10 +1,33 @@
+
+
 {% extends "skeleton.html" %}
+
+{% load tag_folders %}
 
 {% block content %}
 <script>
 
 $(document).ready(function(){
-	refreshPage('{{imagesPath}}')
+	refreshPage('{{imagesPath}}')/*
+	$("#treeViewDiv").jstree({
+		"json_data" : {
+			"data":{{jsonfolders|safe}}
+		},
+		"plugins" : [ "themes", "json_data", "ui" ]
+		}).bind("select_node.jstree", function(e, data){
+			Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
+			Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
+			console.log($("#images a"));
+			$("#images a").prettyPhoto({
+				theme:'light_square',
+				autoplay_slideshow: false,
+				overlay_gallery: false
+			});        
+			event.preventDefault();
+		});	        
+		*/
+		
+                 $("a[rel^='prettyPhoto']").prettyPhoto();
 });
 
 function refreshPage(path){
@@ -12,8 +35,18 @@ function refreshPage(path){
     Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':path});
 }
 
+
+
 </script>
+
 <div id="breadcrumb"></div>
+<div id="treeViewDiv"></div>
+<div id="images2" class="portfolio">
+<a href="/media/normal/2013/Anniversaire/amanda_yg.jpg" rel="prettyPhoto[gallery1]"> <img src="/media/thumbnail/2013/Anniversaire/amanda_yg.jpg"></a>
+</div>
+
+
 <ul id="folders"></ul>
-<div id="images" class="portfolio"></div>
+
 {% endblock %}
+

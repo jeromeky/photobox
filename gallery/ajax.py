@@ -9,10 +9,29 @@ from django.template.loader import render_to_string
 import glob
 import os.path
 
+def searchFolder(path):
+	folders = {};
+	for loopPath in glob.glob(path + '/*'):
+		if(os.path.isdir(loopPath)):
+			keyPath = loopPath.replace(path, '')
+			folders[keyPath] = searchFolder(loopPath);
+			
+	if(len(folders) == 0):
+		return "";
+	return folders;
+
+def defineFolders(folders, viewHTML):
+	viewHTML.append("<ul>");
+	for key, value in OrderedDict(sorted(folders.items(), key=lambda t: t[0])):
+		viewHTML.append("<li><a>" + key + "</li><li>");
+		if(value != null):
+			viewHTML.append(defineFolders(value, viewHTML));
+	viewHTML.append("</ul>");
+
 @dajaxice_register
 def define_breadcrumb(request, pathFolder):
     dajax = Dajax()
-
+    
     mapBreadcrumb = OrderedDict({'home' : settings.MEDIA_IMAGES});
 
     breadcrumb = pathFolder.replace(settings.MEDIA_IMAGES , '');
@@ -34,22 +53,14 @@ def define_breadcrumb(request, pathFolder):
 @dajaxice_register
 def define_folders_images(request, pathFolder):
     dajax = Dajax()
-    
-    folders =[];
     images =[];
     for loopPath in glob.glob(pathFolder + '/*'):
-    	if(os.path.isdir(loopPath)):
-    		folders.append(loopPath)
-    	else:
-    		images.append(loopPath)
+    	if(os.path.isfile(loopPath)):
+    		fileName, fileExtension = os.path.splitext(loopPath)
+    		print fileExtension
+    		if(fileExtension.lower() == ".jpg".lower()):
+    			images.append(loopPath)
     		
-    mapFolders = {};
-    for loopFolder in folders : 
-    	mapFolders[loopFolder.replace(pathFolder, '')] = loopFolder;
-    
-    render = render_to_string('components/folders.html' , {'folders' : mapFolders})
-    dajax.assign('#folders', 'innerHTML', render)
-    
     mapImages = OrderedDict();
     for loopImage in images:
     	thumbnailPath = loopImage.replace(settings.MEDIA_IMAGES, settings.MEDIA_IMAGES_THUMBNAIL);
@@ -61,30 +72,6 @@ def define_folders_images(request, pathFolder):
     render = render_to_string('components/images.html' , {'images' : mapImages})
     dajax.assign('#images', 'innerHTML', render)
     
-    
-    return dajax.json()
-
-@dajaxice_register
-def say_hello(request, pathFolder):
-    dajax = Dajax()
-
-    out = [];
-    
-    pathFolder = "/Applications/Django-1.5/photobox/gallery/media/normal/2013";
-	
-    #We add root path
-    out.append("<a href='%s' >%s</a>" % (settings.MEDIA_IMAGES, "Home"));
-    out.append(" / ");
-    print settings.MEDIA_IMAGES;
-    breadcrumb = pathFolder.replace(settings.MEDIA_IMAGES, '');
-    pathBreadcrumb = settings.MEDIA_IMAGES;
-
-    for loopBreadcrumb in breadcrumb.split('/'):
-    	if(loopBreadcrumb != ""):
-    		pathBreadcrumb += '/' + loopBreadcrumb
-    		out.append("<a href='%s' >%s</a>" % (pathBreadcrumb, loopBreadcrumb));
-
-    dajax.assign('#breadcrumb', 'innerHTML', ''.join(out))
     
     return dajax.json()
 
