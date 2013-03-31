@@ -8,7 +8,7 @@
 <script>
 
 $(document).ready(function(){
-	refreshPage('{{imagesPath}}')/*
+	refreshPage('{{imagesPath}}')
 	$("#treeViewDiv").jstree({
 		"json_data" : {
 			"data":{{jsonfolders|safe}}
@@ -17,17 +17,17 @@ $(document).ready(function(){
 		}).bind("select_node.jstree", function(e, data){
 			Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
 			Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
-			console.log($("#images a"));
-			$("#images a").prettyPhoto({
+
+			$("a[rel^='prettyPhoto']").prettyPhoto({
 				theme:'light_square',
 				autoplay_slideshow: false,
 				overlay_gallery: false
 			});        
 			event.preventDefault();
 		});	        
-		*/
+
 		
-                 $("a[rel^='prettyPhoto']").prettyPhoto();
+//                 $("a[rel^='prettyPhoto']").prettyPhoto();
 });
 
 function refreshPage(path){
@@ -41,9 +41,7 @@ function refreshPage(path){
 
 <div id="breadcrumb"></div>
 <div id="treeViewDiv"></div>
-<div id="images2" class="portfolio">
-<a href="/media/normal/2013/Anniversaire/amanda_yg.jpg" rel="prettyPhoto[gallery1]"> <img src="/media/thumbnail/2013/Anniversaire/amanda_yg.jpg"></a>
-</div>
+<div id="images" class="portfolio"></div>
 
 
 <ul id="folders"></ul>
