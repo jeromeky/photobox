@@ -1,22 +1,19 @@
-
-
 {% extends "skeleton.html" %}
-
-{% load tag_folders %}
 
 {% block content %}
 <script>
 
 $(document).ready(function(){
-	refreshPage('{{imagesPath}}')
+
+
+
 	$("#treeViewDiv").jstree({
 		"json_data" : {
-			"data":{{jsonfolders|safe}}
+			"data":{{treeFolders|safe}}
 		},
 		"plugins" : [ "themes", "json_data", "ui" ]
 		}).bind("select_node.jstree", function(e, data){
-			Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
-			Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
+			Dajaxice.gallery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
 
 			$("a[rel^='prettyPhoto']").prettyPhoto({
 				theme:'light_square',
@@ -26,25 +23,25 @@ $(document).ready(function(){
 			event.preventDefault();
 		});	        
 
-		
-//                 $("a[rel^='prettyPhoto']").prettyPhoto();
+    $( "#resizable" ).resizable();
 });
-
-function refreshPage(path){
-    Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder':path});
-    Dajaxice.gallery.define_folders_images(Dajax.process, {'pathFolder':path});
-}
-
 
 
 </script>
 
-<div id="breadcrumb"></div>
-<div id="treeViewDiv"></div>
+<div id="resizable" class="ui-widget-content">
+  <h3 class="ui-widget-header">Fichiers</h3>
+ 	<div id="treeViewDiv"></div>
+</div>
+	
 <div id="images" class="portfolio"></div>
 
+<div id="page"/>
 
-<ul id="folders"></ul>
+
+
+   
+
 
 {% endblock %}
 

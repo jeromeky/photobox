@@ -50,16 +50,16 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
-MEDIA_ROOT = '/Applications/Django-1.5/photobox/gallery/media/'
+MEDIA_ROOT = '/Users/jeromeky/Documents/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
 
-MEDIA_IMAGES = '/Applications/Django-1.5/photobox/gallery/media/normal/'
+MEDIA_IMAGES = MEDIA_ROOT + '/normal/'
 
-MEDIA_IMAGES_THUMBNAIL = '/Applications/Django-1.5/photobox/gallery/media/thumbnail/'
+MEDIA_IMAGES_THUMBNAIL = MEDIA_ROOT + '/thumbnail/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files

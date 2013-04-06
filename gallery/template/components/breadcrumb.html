@@ -1,8 +1,0 @@
-{%for key, value in breadcrumb.items%}
-<!--	/ <a href="{{value}}" onclick="Dajaxice.gallery.define_breadcrumb(Dajax.process, {'pathFolder' : '{{value}}')" >{{key}}</a>	-->
-	{%if value != ''%}
-		/ <a href="#" onclick="refreshPage('{{value}}')" >{{key}}</a>
-	{%else%}
-		/ {{key}}
-	{%endif%}
-{%endfor%}

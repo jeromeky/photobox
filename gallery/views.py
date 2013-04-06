@@ -20,12 +20,6 @@ def defineFolders(folders, currentPath):
 	return children;
 
 
-#  {"data":"Yahoo", "metadata":{"href":"http://www.yahoo.com"}},
- #                                            {"data":"Bing", "metadata":{"href":"http://www.bing.com"}},
-  #                                           {"data":"Google", "children":[{"data":"Youtube", "metadata":{"href":"http://youtube.com"}},{"data":"Gmail", #"metadata":{"href":"http://www.gmail.com"}},{"data":"Orkut","metadata":{"href":"http://www.orkut.com"}}], "metadata" : {"href":"http://youtube.com"}}
-                                            
-
-
 def searchFolder(path):
 	folders = {};
 	for loopPath in glob.glob(path + '/*'):
@@ -35,12 +29,12 @@ def searchFolder(path):
 			
 	if(len(folders) == 0):
 		return False;
-	return folders;
+	return OrderedDict(sorted(folders.items()));
+
+def treeFolders(rootPath):
+	folders = searchFolder(settings.MEDIA_IMAGES)
+	return defineFolders(folders, rootPath);
 
 
 def homepage(request, template='index.html'):
-	ajaxfolders = searchFolder(settings.MEDIA_IMAGES)
-#	print ajaxfolders
-	jsonfolders = defineFolders(ajaxfolders, settings.MEDIA_IMAGES)
-	print jsonfolders
-	return render_to_response(template, {'imagesPath' : settings.MEDIA_IMAGES, 'jsonfolders' : jsonfolders})
+	return render_to_response(template, {'treeFolders' : 	simplejson.dumps(treeFolders(settings.MEDIA_IMAGES))})

@@ -1,6 +1,19 @@
-{%for key, value in images.items%}
-	<a href="{{value}}" rel='prettyPhoto[portfolio]'> <img src="{{key}}"/></a>
+
+<div style="text-align:center;">
+{%for page in nbPages%}
+	{%if page == currentPage%}
+		{{page}}
+	{%else%}
+		<a href="#" onclick="changeImage(this)" value="OK">{{page}}</a>
+	{%endif%}
 {%endfor%}
+</div>
+
+<br/>
+{%for key, value in images.items%}
+	<a href="{{value}}" rel='prettyPhoto[portfolio]' class="{{forloop.counter}}"> <img src="{{key}}"/></a>
+{%endfor%}
+
 
 <script type="text/javascript">
 	$(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
@@ -8,4 +21,9 @@
 		autoplay_slideshow: false,
 		overlay_gallery: false
 	});
+	
+	function changeImage(page){
+		Dajaxice.gallery.define_images_by_page(Dajax.process,  {'page':$(page).text()});
+	}
+		
 </script>
