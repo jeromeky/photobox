@@ -19,7 +19,11 @@
 </div>
 
 <br/>
-
+<!--
 {%for key, value in images.items%}
 	<a href="{{value}}" rel='prettyPhoto[portfolio]' class="{{forloop.counter}}"> <img src="{{key}}"/></a>
+{%endfor%}
+-->
+{%for key, value in images.items%}
+	<a href="{{value}}" class="swipebox"> <img src="{{key}}"/></a>
 {%endfor%}
