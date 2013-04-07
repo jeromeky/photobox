@@ -1,29 +1,25 @@
-
 <div style="text-align:center;">
-{%for page in nbPages%}
-	{%if page == currentPage%}
-		{{page}}
-	{%else%}
-		<a href="#" onclick="changeImage(this)" value="OK">{{page}}</a>
-	{%endif%}
-{%endfor%}
+    <span class="step-links">
+        {% if items.has_previous %}
+            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.previous_page_number }}})">previous</a>
+        {% endif %}
+        {%for page in paginator.page_range%}
+        	<span class="current">
+        		{%if page != items.number%}
+		            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ page }}})">{{page}}</a>
+		        {%else%}
+		        	{{page}}
+	            {%endif%}
+            </span>
+        {%endfor%}
+        {% if items.has_next %}
+            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.next_page_number }}})">next</a>
+        {% endif %}
+    </span>
 </div>
 
 <br/>
+
 {%for key, value in images.items%}
 	<a href="{{value}}" rel='prettyPhoto[portfolio]' class="{{forloop.counter}}"> <img src="{{key}}"/></a>
 {%endfor%}
-
-
-<script type="text/javascript">
-	$(".portfolio a[rel^='prettyPhoto']").prettyPhoto({
-		theme:'light_square',
-		autoplay_slideshow: false,
-		overlay_gallery: false
-	});
-	
-	function changeImage(page){
-		Dajaxice.gallery.define_images_by_page(Dajax.process,  {'page':$(page).text()});
-	}
-		
-</script>

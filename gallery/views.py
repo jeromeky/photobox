@@ -7,7 +7,6 @@ import os.path
 from django.utils import simplejson
 
 def defineFolders(folders, currentPath):
-
 	children =[];
 	for key, value in folders.items():
 		jsonfolders ={};

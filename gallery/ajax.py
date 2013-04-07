@@ -3,13 +3,12 @@
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
 from dajax.core import Dajax
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from django.conf import settings
 from collections import OrderedDict
 from django.template.loader import render_to_string
 import glob
 import os.path
-
-images = [];
 
 def searchFolder(path):
 	folders = {};
@@ -30,13 +29,14 @@ def defineFolders(folders, viewHTML):
 			viewHTML.append(defineFolders(value, viewHTML));
 	viewHTML.append("</ul>");
 
-def get_range(dictionary, begin, end):
-  return dict((k, v) for k, v in dictionary.iteritems() if begin <= k <= end)
-
+##
+##	First call to define all images in a folder
+##	then we call define_images_by_page to draw all images in index.html
+##
 @dajaxice_register
 def define_images(request, pathFolder):
     dajax = Dajax()
-    global images
+    global paginator
     images = []
     for loopPath in glob.glob(pathFolder + '/*'):
     	if(os.path.isfile(loopPath)):
@@ -44,40 +44,37 @@ def define_images(request, pathFolder):
     		if(fileExtension.lower() == ".jpg".lower()):
     			images.append(loopPath)
 
-    mapImages = OrderedDict();
-    for loopImage in images[0:20]:
-    	thumbnailPath = loopImage.replace(settings.MEDIA_IMAGES, settings.MEDIA_IMAGES_THUMBNAIL);
-    	thumbnailPath = thumbnailPath.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
-    	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
-    	mapImages[thumbnailPath] = loopImage;
-    	
-    
-    nbPages = range(0, len(images) / 20)
-    render = render_to_string('components/images.html' , {'images' : mapImages, 'nbPages' : nbPages, 'currentPage' : 0})
-    dajax.assign('#images', 'innerHTML', render)
-    
-    return dajax.json()
-    
+    paginator = Paginator(images, 20)
+    return define_images_by_page(request, 1);
 
+
+##
+##	Define image in index.html
+##
 @dajaxice_register
 def define_images_by_page(request, page):
     dajax = Dajax()
-    mapImages = OrderedDict();
     
-    firstIndex = int(page)*20;
-    print firstIndex
-    lastIndex = firstIndex+20;
+    try:
+        page = int(page)
+    except ValueError:
+        page = 1
+
+    try:
+        items = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        items = paginator.page(paginator.num_pages)
     
-    nbPages = range(0, len(images) / 20)
-    
-    for loopImage in images[firstIndex:lastIndex]:
+    mapImages = OrderedDict(); 
+    for loopImage in items.object_list:
     	thumbnailPath = loopImage.replace(settings.MEDIA_IMAGES, settings.MEDIA_IMAGES_THUMBNAIL);
     	thumbnailPath = thumbnailPath.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
     	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
     	mapImages[thumbnailPath] = loopImage;
     	
-    render = render_to_string('components/images.html', {'images' : mapImages, 'nbPages' : nbPages, 'currentPage' : page})
+    render = render_to_string('components/images.html', {'images' : mapImages, 'paginator' : paginator, 'items' : items})
     dajax.assign('#images', 'innerHTML', render)
+    dajax.script("loadPrettyPhoto();")
     
     return dajax.json()
     

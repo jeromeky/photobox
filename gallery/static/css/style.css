@@ -1,12 +1,11 @@
 #resizable {
-				padding: 0.5em;
-				overflow:hidden;
-				width:30%;
-				white-space:nowrap;
-			}
-#resizable h3 { 
-				text-align: center;
-				margin: 0;
-			}
-			
+	padding: 0.5em;
+	overflow:hidden;
+	width:90%;
+	white-space:nowrap;
+}
 
+#resizable h3 { 
+	text-align: center;
+	margin: 0;
+}

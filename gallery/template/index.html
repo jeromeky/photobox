@@ -5,8 +5,6 @@
 
 $(document).ready(function(){
 
-
-
 	$("#treeViewDiv").jstree({
 		"json_data" : {
 			"data":{{treeFolders|safe}}
@@ -15,11 +13,7 @@ $(document).ready(function(){
 		}).bind("select_node.jstree", function(e, data){
 			Dajaxice.gallery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
 
-			$("a[rel^='prettyPhoto']").prettyPhoto({
-				theme:'light_square',
-				autoplay_slideshow: false,
-				overlay_gallery: false
-			});        
+			loadPrettyPhoto();
 			event.preventDefault();
 		});	        
 
@@ -35,13 +29,6 @@ $(document).ready(function(){
 </div>
 	
 <div id="images" class="portfolio"></div>
-
-<div id="page"/>
-
-
-
-   
-
 
 {% endblock %}
 
