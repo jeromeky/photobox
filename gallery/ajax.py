@@ -33,7 +33,7 @@ def defineFolders(folders, viewHTML):
 ##	First call to define all images in a folder
 ##	then we call define_images_by_page to draw all images in index.html
 ##
-@dajaxice_register
+@dajaxice_register(method='GET')
 def define_images(request, pathFolder):
     dajax = Dajax()
     global paginator
@@ -51,7 +51,7 @@ def define_images(request, pathFolder):
 ##
 ##	Define image in index.html
 ##
-@dajaxice_register
+@dajaxice_register(method='GET')
 def define_images_by_page(request, page):
     dajax = Dajax()
     

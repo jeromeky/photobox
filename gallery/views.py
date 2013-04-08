@@ -2,9 +2,9 @@
 from django.shortcuts import render_to_response
 from django.conf import settings
 from collections import OrderedDict
+from django.utils import simplejson
 import glob 
 import os.path
-from django.utils import simplejson
 
 def defineFolders(folders, currentPath):
 	children =[];

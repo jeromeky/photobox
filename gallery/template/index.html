@@ -2,6 +2,32 @@
 
 {% block content %}
 <script>
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].strip();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue =
+decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+function requestPage(event) {
+    var element = event;//event.element();
+    var url = '/'+element.identify()+'/';
+    new Ajax.Updater('content', url, {
+        method: 'post',
+        requestHeaders: {'X-CSRFToken':getCookie('csrftoken') },
+    });
+}
 
 $(document).ready(function(){
 

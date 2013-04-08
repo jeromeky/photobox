@@ -27,3 +27,5 @@
 {%for key, value in images.items%}
 	<a href="{{value}}" class="swipebox"> <img src="{{key}}"/></a>
 {%endfor%}
+
+{% csrf_token %}
