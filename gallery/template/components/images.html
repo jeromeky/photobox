@@ -1,24 +1,22 @@
-<div style="text-align:center;">
-    <span class="step-links">
+<nav class="pagination">
+	<ul>
         {% if items.has_previous %}
-            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.previous_page_number }}})">previous</a>
+            <li class="prev"><a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.previous_page_number }}})">previous</a></li>
+        {%else%}
+            <li class="prev disabled"><a href="#">previous</a></li>	
         {% endif %}
-        {%for page in paginator.page_range%}
-        	<span class="current">
-        		{%if page != items.number%}
-		            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ page }}})">{{page}}</a>
-		        {%else%}
-		        	{{page}}
-	            {%endif%}
-            </span>
+        {%for page in items.paginator.page_range%}
+			<li class="{%if page == items.number%}active{%endif%} {%if page == 1%}first{%endif%} {%if page == items.paginator.num_pages%}last{%endif%}">
+            	<a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ page }}})">{{page}}</a>
+			</li>
         {%endfor%}
         {% if items.has_next %}
-            <a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.next_page_number }}})">next</a>
+            <li class="next"><a href="#" onclick="Dajaxice.gallery.define_images_by_page(Dajax.process,{'page':{{ items.next_page_number }}})">next</a></li>
+        {%else%}
+        	<li class="next disabled"><a href="#">next</a></li>
         {% endif %}
-    </span>
-</div>
-
-<br/>
+    </ul>
+</div><br/>
 <!--
 {%for key, value in images.items%}
 	<a href="{{value}}" rel='prettyPhoto[portfolio]' class="{{forloop.counter}}"> <img src="{{key}}"/></a>
@@ -27,5 +25,3 @@
 {%for key, value in images.items%}
 	<a href="{{value}}" class="swipebox"> <img src="{{key}}"/></a>
 {%endfor%}
-
-{% csrf_token %}

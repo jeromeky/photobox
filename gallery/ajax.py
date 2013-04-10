@@ -72,7 +72,7 @@ def define_images_by_page(request, page):
     	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
     	mapImages[thumbnailPath] = loopImage;
     	
-    render = render_to_string('components/images.html', {'images' : mapImages, 'paginator' : paginator, 'items' : items})
+    render = render_to_string('components/images.html', {'images' : mapImages,'items' : items})
     dajax.assign('#images', 'innerHTML', render)
     dajax.script("loadPrettyPhoto();")
     
