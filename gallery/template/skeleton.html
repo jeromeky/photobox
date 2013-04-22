@@ -14,7 +14,8 @@
     {% block js %}
     {% endblock %}
   </head>
-  <body>
+  
+  <body >
     <div id="container" >
       <div id="header">
         {% block header %}
@@ -22,6 +23,7 @@
         {% endblock %}
       </div>
       <div id="content">
+      
         {% block content %}
         <h3>Voici mon application : </h3>
         {% endblock %}
@@ -31,6 +33,11 @@
         {% include "footer.html" %}
         {% endblock %}
       </div>
+      
     </div>
+
+	<div id="modalLoading">
+		<div id="loading" class="ajaxloader"/>
+	</div>
   </body>
 </html>

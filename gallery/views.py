@@ -6,6 +6,12 @@ from django.utils import simplejson
 import glob 
 import os.path
 
+
+##
+## Search all folder in a path and return a list of folders
+## This is a recursive function, started with a root path then will search
+## in all children and so on and so forth until there is no more children path
+##
 def defineFolders(folders, currentPath):
 	children =[];
 	for key, value in folders.items():
@@ -18,7 +24,9 @@ def defineFolders(folders, currentPath):
 		children.append(jsonfolders);
 	return children;
 
-
+##
+## List all folders in a path and return it in a OrderedDict
+##
 def searchFolder(path):
 	folders = {};
 	for loopPath in glob.glob(path + '/*'):
@@ -30,10 +38,10 @@ def searchFolder(path):
 		return False;
 	return OrderedDict(sorted(folders.items()));
 
-def treeFolders(rootPath):
-	folders = searchFolder(settings.MEDIA_IMAGES)
-	return defineFolders(folders, rootPath);
 
-
+##
+## Define homepage view
+##
 def homepage(request, template='index.html'):
-	return render_to_response(template, {'treeFolders' : 	simplejson.dumps(treeFolders(settings.MEDIA_IMAGES))})
+	jsonFolders = defineFolders(searchFolder(settings.MEDIA_IMAGES), settings.MEDIA_IMAGES)
+	return render_to_response(template, {'treeFolders' : simplejson.dumps(jsonFolders)})

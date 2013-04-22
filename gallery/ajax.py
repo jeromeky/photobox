@@ -9,25 +9,48 @@ from collections import OrderedDict
 from django.template.loader import render_to_string
 import glob
 import os.path
+from sorl.thumbnail import get_thumbnail
 
-def searchFolder(path):
-	folders = {};
-	for loopPath in glob.glob(path + '/*'):
-		if(os.path.isdir(loopPath)):
-			keyPath = loopPath.replace(path, '')
-			folders[keyPath] = searchFolder(loopPath);
-			
-	if(len(folders) == 0):
-		return "";
-	return folders;
+@dajaxice_register(method='GET')
+def define_all_images(request, pathFolder):
+	dajax = Dajax()
+	dajax.add_data(simplejson.dumps({'progress':0}), 'setProgress')
+	global paginator
+	images = []
+	for loopPath in glob.glob(pathFolder + '/*'):
+		if(os.path.isfile(loopPath)):
+			fileName, fileExtension = os.path.splitext(loopPath)
+			if(fileExtension.lower() == ".jpg".lower()):
+				thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
+				images.append(thumbnailPath)
+	paginator = Paginator(images, 20)
+	
+	if(len(images)>0):
+		dajax.script("displayModalLoading();")
+		dajax.add_data(simplejson.dumps({'images' : images}), 'createGalleryThumbnail')
+	else:
+		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
+		dajax.assign('#images', 'innerHTML', render)
 
-def defineFolders(folders, viewHTML):
-	viewHTML.append("<ul>");
-	for key, value in OrderedDict(sorted(folders.items(), key=lambda t: t[0])):
-		viewHTML.append("<li><a>" + key + "</li><li>");
-		if(value != null):
-			viewHTML.append(defineFolders(value, viewHTML));
-	viewHTML.append("</ul>");
+	
+	
+	return dajax.json()
+    
+
+@dajaxice_register(method='GET')
+def create_thumbnail(request, pathImage, cpt):
+	dajax = Dajax()
+	get_thumbnail(pathImage, settings.THUMBNAIL_SIZE, crop='center')
+	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2)}), 'setProgress')
+	
+	size = os.path.getsize(settings.MEDIA_ROOT + pathImage)
+	if(paginator.count == cpt):
+		items = paginator.page(1)	
+		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
+		dajax.assign('#images', 'innerHTML', render)
+		dajax.script("loadPrettyPhoto();")
+		dajax.script("hideModalLoading();")
+	return dajax.json()
 
 ##
 ##	First call to define all images in a folder
@@ -42,7 +65,10 @@ def define_images(request, pathFolder):
     	if(os.path.isfile(loopPath)):
     		fileName, fileExtension = os.path.splitext(loopPath)
     		if(fileExtension.lower() == ".jpg".lower()):
-    			images.append(loopPath)
+    			thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
+    			print thumbnailPath
+    			get_thumbnail(thumbnailPath	, settings.THUMBNAIL_SIZE, crop='center')
+    			images.append(thumbnailPath)
 
     paginator = Paginator(images, 20)
     return define_images_by_page(request, 1);
@@ -54,7 +80,7 @@ def define_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def define_images_by_page(request, page):
     dajax = Dajax()
-    
+        
     try:
         page = int(page)
     except ValueError:
@@ -67,14 +93,14 @@ def define_images_by_page(request, page):
     
     mapImages = OrderedDict(); 
     for loopImage in items.object_list:
-    	thumbnailPath = loopImage.replace(settings.MEDIA_IMAGES, settings.MEDIA_IMAGES_THUMBNAIL);
-    	thumbnailPath = thumbnailPath.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
-    	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL);
-    	mapImages[thumbnailPath] = loopImage;
-    	
-    render = render_to_string('components/images.html', {'images' : mapImages,'items' : items})
-    dajax.assign('#images', 'innerHTML', render)
-    dajax.script("loadPrettyPhoto();")
-    
+    	thumbnailPath = loopImage.replace(settings.MEDIA_ROOT + "/", "")
+    	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL)
+    	mapImages[thumbnailPath] = loopImage
+
+    #render = render_to_string('components/images.html', {'images' : mapImages,'items' : items, 'im' : settings.MEDIA_URL})
+    #dajax.assign('#images', 'innerHTML', render)
+    #dajax.script("loadPrettyPhoto();")
+#    dajax.script("loading(false);")
+
     return dajax.json()
     

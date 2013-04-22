@@ -1,36 +1,12 @@
 {% extends "skeleton.html" %}
 
 {% block content %}
+
 <script>
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].strip();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue =
-decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-function requestPage(event) {
-    var element = event;//event.element();
-    var url = '/'+element.identify()+'/';
-    new Ajax.Updater('content', url, {
-        method: 'post',
-        requestHeaders: {'X-CSRFToken':getCookie('csrftoken') },
-    });
-}
 
 $(document).ready(function(){
 
+		/*
 	$("#treeViewDiv").jstree({
 		"json_data" : {
 			"data":{{treeFolders|safe}}
@@ -38,35 +14,24 @@ $(document).ready(function(){
 		
 		"plugins" : [ "themes", "json_data", "ui" ]
 		}).bind("select_node.jstree", function(e, data){
-			Dajaxice.gallery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
-
-			loadPrettyPhoto();
+			loading(true);
+			Dajaxice.gelery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
 			event.preventDefault();
-		}).bind("select_node.jstree", function(event, data) {
-			// data.inst is the tree object, and data.rslt.obj is the node
-			return data.inst.toggle_node(data.rslt.obj);
+			return data.inst.toggle_node(data.rslt.obj);			
   		});
-jQuery(function($) {
-    function fixDiv() {
-      var $cache = $('#filemenu'); 
-      if ($(window).scrollTop() > 50 && $(window).width() > 800) 
-        $cache.css({'position': 'fixed', 'top': '10px'}); 
-      else
-        $cache.css({'position': 'relative', 'top': 'auto'});
-    }
-    $(window).scroll(fixDiv);
-    fixDiv();
-});
-
+  		*/
+		loading(false);
+  		createFolders({{treeFolders|safe}});
+  		fixMenuFolder();
+		createLoadAjax();
 });
 
 
 </script>
-
 <div class="container">
   <div class="row">
-    <nav class="one fourth padded border-right">
-      	<div id="filemenu">
+    <nav class="one fourth padded">
+      	<div id="filemenu" class="padded border-right">
 	      	<h3 class="ui-widget-header">Fichiers</h3>
 	      	<div class="list" id="treeViewDiv"></div>
       	</div>
@@ -74,14 +39,13 @@ jQuery(function($) {
     <section class="three fourths padded align-center">
     	<h1 class="responsive" >Photos</h1>    
     	<div id="images" class="portfolio"></div>
+
     </section>
   </div>
   <footer class="footer align-right">
     <p>&copy 2013 Photobox</p>
   </footer>
 </div>
-
-	
 
 {% endblock %}
 

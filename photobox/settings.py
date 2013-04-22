@@ -1,24 +1,39 @@
 # Django settings for photobox project.
 
+import os
+import django
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+THUMBNAIL_DEBUG = True
+
+THUMBNAIL_SIZE = "300x300"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+
 MANAGERS = ADMINS
 
+THUMBNAIL_KVSTORE="sorl.thumbnail.kvstores.redis_kvstore.KVStore"
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '',                      # Or path to database file if using sqlite3.
+    #'default': {
+     #   'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+      #  'NAME': '',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
+       # 'USER': '',
+        #'PASSWORD': '',
+        #'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        #'PORT': '',                      # Set to empty string for default.
+    #}
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -48,6 +63,9 @@ USE_L10N = True
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = True
 
+DJANGO_ROOT = os.path.dirname(os.path.realpath(django.__file__))
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__)) + '/..'
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
 MEDIA_ROOT = '/Users/jeromeky/Documents/media/'
@@ -76,8 +94,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Applications/Django-1.5/photobox/gallery/static',
-    '/usr/local/Django-1.5/photobox/gallery/static',
+     os.path.join(SITE_ROOT, 'gallery', 'static'),
+     '/Users/jeromeky/Documents/media/',
 )
 
 # List of finder classes that know how to find static files in
@@ -119,8 +137,10 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/Applications/Django-1.5/photobox/gallery/template/',
-    '/usr/local/Django-1.5/photobox/gallery/template/'
+    #'/Applications/Django-1.5/photobox/gallery/template/',
+    #'/usr/local/Django-1.5/photobox/gallery/template/',
+     os.path.join(SITE_ROOT, 'gallery', 'template'),
+#    '/Users/jeromeky/Documents/virtualenv/photobox/gallery/template',
 )
 
 INSTALLED_APPS = (
@@ -132,7 +152,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'dajaxice',
     'gallery',
-     'dajaxice',
+    'dajaxice',
+    'sorl.thumbnail',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:

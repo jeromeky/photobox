@@ -1,11 +1,27 @@
-#resizable {
-	padding: 0.5em;
-	overflow:hidden;
-	width:90%;
-	white-space:nowrap;
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   speak for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+#modalLoading {
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                50% 50% 
+                no-repeat;
 }
 
-#resizable h3 { 
-	text-align: center;
-	margin: 0;
+.ajaxloader{position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 200px;
+    height: 200px;
+    padding: 0;
+    border: 0;
+    margin-left:-100px; /* 971/2 */
+    margin-top:-100px; /* 669/2 */
 }
