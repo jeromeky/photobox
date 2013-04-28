@@ -25,3 +25,14 @@
     margin-left:-100px; /* 971/2 */
     margin-top:-100px; /* 669/2 */
 }
+
+#resizer {
+position: fixed;
+top: 0;
+z-index: 99;
+width: 315px;
+left: 50%;
+height: 2em;
+margin: 0 auto;
+margin-left: -100px;
+}

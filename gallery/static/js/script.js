@@ -1,54 +1,12 @@
-var loadajax
+var loadajax;
+var currentSizeLoadAjax = 0;
 
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].strip();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue =
-decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-function requestPage(event) {
-    var element = event;//event.element();
-    var url = '/'+element.identify()+'/';
-    new Ajax.Updater('content', url, {
-        method: 'post',
-        requestHeaders: {'X-CSRFToken':getCookie('csrftoken') },
-    });
-}
-
-
-function loadPrettyPhoto(){
-	$(".swipebox").swipebox();
-}
-
-
-
-//
-// clear then fill gallery with images 
-//
-function getImageByPage(page){
-	$("#galleryImage").empty();
-	Dajaxice.gallery.define_images_by_page(Dajax.process,{'page': page})
-}
-
-function createGalleryThumbnail(data){
-    var obj = jQuery.parseJSON(data);
-	jQuery.each(obj.images, function(index, item) {
-		Dajaxice.gallery.create_thumbnail(Dajax.process, {'pathImage':item, 'cpt' : index+1});
-	});
-
-}
+$(document).ready(function(){
+	loading(false);
+  	fixMenuFolder();
+	createLoadAjax();	
+	
+});
 
 //
 // Create jstree of folders
@@ -62,13 +20,39 @@ function createFolders(jsonTreeFolders){
 		
 		"plugins" : [ "themes", "json_data", "ui" ]
 		}).bind("select_node.jstree", function(e, data){
-//			Dajaxice.gallery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
 			Dajaxice.gallery.define_all_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
-			event.preventDefault();
 			return data.inst.toggle_node(data.rslt.obj);			
+			event.preventDefault();
 	});
 }
 
+
+//
+// Create swipebox photo
+//
+function createSwipeImages(){
+	$(".swipebox").swipebox();
+}
+
+//
+// clear then fill gallery with images 
+//
+function getImageByPage(page){
+	Dajaxice.gallery.define_images_by_page(Dajax.process,{'page': page})
+}
+
+//
+// Create all thumbnail images while a django ajax.
+// We make an ajax request for each thumbnail so we can have progression for loader
+//
+function createGalleryThumbnail(data){
+    var obj = jQuery.parseJSON(data);
+    currentSizeLoadAjax=0;
+	jQuery.each(obj.images, function(index, item) {
+		Dajaxice.gallery.create_thumbnail(Dajax.process, {'pathImage':item, 'cpt' : index+1});
+	});
+
+}
 //
 // Fix folders when user scroll
 //
@@ -86,32 +70,60 @@ function fixMenuFolder(){
 	});
 }
 
+//
+// Create loader percentage
+//
 function createLoadAjax(){
 	loadajax = $("#loading").percentageLoader({
-	        width : 180, height : 180, progress : 0, value: 40 
-        });
+	     width : 200, height : 200, progress : 0, value: 40 
+     });
 }
 
- function setProgress(data){
- 	var obj = jQuery.parseJSON(data);
-    loadajax.setProgress(obj.progress);
- }
+//
+// set progress loader
+//
+function setProgress(data){
+	var obj = jQuery.parseJSON(data);
+	loadajax.setProgress(obj.progress);
+	currentSizeLoadAjax=currentSizeLoadAjax + obj.size;
+	loadajax.setValue(currentSizeLoadAjax + 'Kb');
+}
  
- function displayModalLoading(){
-	 loading(true);
- }
- 
- function hideModalLoading(){
-	 loading(false);
- }
- 
+//
+// Display loader ajax
+//
+function displayModalLoading(){
+	loading(true);
+}
+
+//
+// Hide loader ajax
+//
+function hideModalLoading(){
+	loading(false);
+}
+
+//
+// Clear all images and pagination
+// 
+function clearAllImages(){
+	$("#images").empty();
+}
+
+//
+// 
+//
+function clearPageImages(){
+	console.log("clear images");
+	$("#galleryImage").empty();
+}
+
 //
 // show/hide the ajax-loader.gif
 //
 function loading(start){
-	if(start){		
-//	    loadajax.setProgress(0);
-	    $("#modalLoading").show();
-	}else
+	if(start)
+		$("#modalLoading").show();
+	else
 		$("#modalLoading").hide();
 } 

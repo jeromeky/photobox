@@ -9,35 +9,28 @@
   <head>
     <title>My App</title>
     {% dajaxice_js_import %}
-    {% block css %}
+
+    {% block head %}
+    {% include "head.html" %}
     {% endblock %}
-    {% block js %}
-    {% endblock %}
+        
   </head>
   
   <body >
     <div id="container" >
-      <div id="header">
-        {% block header %}
-        {% include "header.html" %}
-        {% endblock %}
-      </div>
       <div id="content">
       
         {% block content %}
-        <h3>Voici mon application : </h3>
-        {% endblock %}
-      </div>
-      <div id="footer">
-        {% block footer %}
-        {% include "footer.html" %}
+
         {% endblock %}
       </div>
       
     </div>
+    {% block modal_dialogs %}
+    {% include "modal_dialogs.html" %}
+    {% endblock %}
 
-	<div id="modalLoading">
-		<div id="loading" class="ajaxloader"/>
-	</div>
+<script type="text/javascript" src="/static/js/groundwork.all.js"></script>
+
   </body>
 </html>

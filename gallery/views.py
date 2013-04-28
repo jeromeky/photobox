@@ -45,3 +45,4 @@ def searchFolder(path):
 def homepage(request, template='index.html'):
 	jsonFolders = defineFolders(searchFolder(settings.MEDIA_IMAGES), settings.MEDIA_IMAGES)
 	return render_to_response(template, {'treeFolders' : simplejson.dumps(jsonFolders)})
+

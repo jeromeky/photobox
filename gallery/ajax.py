@@ -10,11 +10,13 @@ from django.template.loader import render_to_string
 import glob
 import os.path
 from sorl.thumbnail import get_thumbnail
+from django.core.files.storage import File
 
 @dajaxice_register(method='GET')
 def define_all_images(request, pathFolder):
 	dajax = Dajax()
-	dajax.add_data(simplejson.dumps({'progress':0}), 'setProgress')
+	dajax.add_data(simplejson.dumps({'progress':0}), 'setProgress')	
+	dajax.script("clearAllImages();")
 	global paginator
 	images = []
 	for loopPath in glob.glob(pathFolder + '/*'):
@@ -25,53 +27,32 @@ def define_all_images(request, pathFolder):
 				images.append(thumbnailPath)
 	paginator = Paginator(images, 20)
 	
+	print len(images)
+	
 	if(len(images)>0):
+		print "here"
 		dajax.script("displayModalLoading();")
 		dajax.add_data(simplejson.dumps({'images' : images}), 'createGalleryThumbnail')
-	else:
-		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
-		dajax.assign('#images', 'innerHTML', render)
-
-	
 	
 	return dajax.json()
     
-
+##
+## Create all thumbnail
+##
 @dajaxice_register(method='GET')
 def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
-	get_thumbnail(pathImage, settings.THUMBNAIL_SIZE, crop='center')
-	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2)}), 'setProgress')
+	im = get_thumbnail(pathImage, settings.THUMBNAIL_SIZE, crop='center')
+	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
+	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
 	
-	size = os.path.getsize(settings.MEDIA_ROOT + pathImage)
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
 		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
 		dajax.assign('#images', 'innerHTML', render)
-		dajax.script("loadPrettyPhoto();")
+		dajax.script("createSwipeImages();")
 		dajax.script("hideModalLoading();")
 	return dajax.json()
-
-##
-##	First call to define all images in a folder
-##	then we call define_images_by_page to draw all images in index.html
-##
-@dajaxice_register(method='GET')
-def define_images(request, pathFolder):
-    dajax = Dajax()
-    global paginator
-    images = []
-    for loopPath in glob.glob(pathFolder + '/*'):
-    	if(os.path.isfile(loopPath)):
-    		fileName, fileExtension = os.path.splitext(loopPath)
-    		if(fileExtension.lower() == ".jpg".lower()):
-    			thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
-    			print thumbnailPath
-    			get_thumbnail(thumbnailPath	, settings.THUMBNAIL_SIZE, crop='center')
-    			images.append(thumbnailPath)
-
-    paginator = Paginator(images, 20)
-    return define_images_by_page(request, 1);
 
 
 ##
@@ -80,7 +61,7 @@ def define_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def define_images_by_page(request, page):
     dajax = Dajax()
-        
+    
     try:
         page = int(page)
     except ValueError:
@@ -90,17 +71,10 @@ def define_images_by_page(request, page):
         items = paginator.page(page)
     except (EmptyPage, InvalidPage):
         items = paginator.page(paginator.num_pages)
-    
-    mapImages = OrderedDict(); 
-    for loopImage in items.object_list:
-    	thumbnailPath = loopImage.replace(settings.MEDIA_ROOT + "/", "")
-    	loopImage = loopImage.replace(settings.MEDIA_ROOT, settings.MEDIA_URL)
-    	mapImages[thumbnailPath] = loopImage
 
-    #render = render_to_string('components/images.html', {'images' : mapImages,'items' : items, 'im' : settings.MEDIA_URL})
-    #dajax.assign('#images', 'innerHTML', render)
-    #dajax.script("loadPrettyPhoto();")
-#    dajax.script("loading(false);")
+    render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
+    dajax.assign('#images', 'innerHTML', render)
+    dajax.script("createSwipeImages();")
 
     return dajax.json()
     

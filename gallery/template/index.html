@@ -5,47 +5,41 @@
 <script>
 
 $(document).ready(function(){
-
-		/*
-	$("#treeViewDiv").jstree({
-		"json_data" : {
-			"data":{{treeFolders|safe}}
-		},
-		
-		"plugins" : [ "themes", "json_data", "ui" ]
-		}).bind("select_node.jstree", function(e, data){
-			loading(true);
-			Dajaxice.gelery.define_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
-			event.preventDefault();
-			return data.inst.toggle_node(data.rslt.obj);			
-  		});
-  		*/
-		loading(false);
-  		createFolders({{treeFolders|safe}});
-  		fixMenuFolder();
-		createLoadAjax();
+	createFolders({{treeFolders|safe}});
 });
 
 
 </script>
+<div style="position:fixed;top:0;z-index:99;width:100%;">
+    <div id="resizer">
+      <ul class="button-list pull-left">
+        <li><a class="modal button" href="/about"><i class="icon-cog"></i></a></li>
+        <li><a title="Settings" href="#setting-modal" ><i class="icon-cog"></i></a></li>
+        <li><a id="editImages" title="Edit" href="#"><i class="icon-pencil"></i></a></li>
+        <li><a title="Refresh" href="#"><i class="icon-refresh"></i></a></li>
+        <li><a title="About" href="#setting-about"><i class="icon-info-sign"></i></a></li>
+      </ul>
+    </div>
+  </div>
 <div class="container">
   <div class="row">
-    <nav class="one fourth padded">
+    <nav class="one fourth padded" >
       	<div id="filemenu" class="padded border-right">
 	      	<h3 class="ui-widget-header">Fichiers</h3>
-	      	<div class="list" id="treeViewDiv"></div>
+	      	<div class="list" id="treeViewDiv" ></div>
       	</div>
     </nav>
     <section class="three fourths padded align-center">
     	<h1 class="responsive" >Photos</h1>    
-    	<div id="images" class="portfolio"></div>
-
+    	<div id="images"></div>
     </section>
   </div>
   <footer class="footer align-right">
     <p>&copy 2013 Photobox</p>
   </footer>
 </div>
+
+
 
 {% endblock %}
 

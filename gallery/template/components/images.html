@@ -17,24 +17,14 @@
         	<li class="next disabled"><a href="#">next</a></li>
         {% endif %}
     </ul>
+</nav>
+<br/>
 
-</div><br/>
-
-
-{%for path in items.object_list%}
-	{% thumbnail path thumb_size crop="center" as thumb_image %}
-		<a href="{{root_media_path}}{{path}}" class="swipebox"><img src="{{ thumb_image.url }}" width="{{ thumb_image.width }}" height="{{ thumb_image.height }}"></a>
-	{% endthumbnail %}
-{%endfor%}
 <div id="galleryImage">
-{%comment%}
-	{%for key, value in images.items%}
-		{% thumbnail key thumb_size crop="center" as im %}
-			<a href="{{value}}" class="swipebox"><img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></a>
+	{%for path in items.object_list%}
+		{% thumbnail path thumb_size crop="center" as thumb_image %}
+			<a href="{{root_media_path}}{{path}}" class="swipebox"><img src="{{ thumb_image.url }}" width="{{ thumb_image.width }}" height="{{ thumb_image.height }}"/>
 		{% endthumbnail %}
-	{%endfor%}
-{%endcomment%}
+{%endfor%}
 </div>
-
-<script>
-</script>
+ 

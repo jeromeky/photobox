@@ -7,7 +7,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = True
 
-THUMBNAIL_SIZE = "300x300"
+THUMBNAIL_SIZE = "150x150"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),

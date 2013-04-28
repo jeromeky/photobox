@@ -1,6 +1,0 @@
-<script>
-	var obj = jQuery.parseJSON('{{images|safe}}');
-	jQuery.each(obj, function(index, item) {
-		Dajaxice.gallery.create_thumbnail(Dajax.process, {'pathImage':item, 'cpt' : index+1});
-	});
-</script>

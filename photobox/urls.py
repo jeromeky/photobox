@@ -13,7 +13,7 @@ dajaxice_autodiscover()
 urlpatterns = patterns('',
 	(r'^gallery/$', 'gallery.views.homepage'),
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
-(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
 
     # Examples:
