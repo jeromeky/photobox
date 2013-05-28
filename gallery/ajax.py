@@ -11,13 +11,18 @@ import glob
 import os.path
 from sorl.thumbnail import get_thumbnail
 from django.core.files.storage import File
+from gallery.views import context
 
+##
+## Define all images
+##
 @dajaxice_register(method='GET')
 def define_all_images(request, pathFolder):
 	dajax = Dajax()
 	dajax.add_data(simplejson.dumps({'progress':0}), 'setProgress')	
 	dajax.script("clearAllImages();")
 	global paginator
+	print context.width
 	images = []
 	for loopPath in glob.glob(pathFolder + '/*'):
 		if(os.path.isfile(loopPath)):
@@ -25,12 +30,9 @@ def define_all_images(request, pathFolder):
 			if(fileExtension.lower() == ".jpg".lower()):
 				thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
 				images.append(thumbnailPath)
-	paginator = Paginator(images, 20)
-	
-	print len(images)
+	paginator = Paginator(images, context.imagesbypage)
 	
 	if(len(images)>0):
-		print "here"
 		dajax.script("displayModalLoading();")
 		dajax.add_data(simplejson.dumps({'images' : images}), 'createGalleryThumbnail')
 	
@@ -42,13 +44,12 @@ def define_all_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
-	im = get_thumbnail(pathImage, settings.THUMBNAIL_SIZE, crop='center')
+	im = get_thumbnail(pathImage, context.getsize(), crop='center')
 	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
 	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
-	
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
-		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
+		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
 		dajax.assign('#images', 'innerHTML', render)
 		dajax.script("createSwipeImages();")
 		dajax.script("hideModalLoading();")
@@ -72,9 +73,20 @@ def define_images_by_page(request, page):
     except (EmptyPage, InvalidPage):
         items = paginator.page(paginator.num_pages)
 
-    render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : settings.THUMBNAIL_SIZE})
+    render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
     dajax.assign('#images', 'innerHTML', render)
     dajax.script("createSwipeImages();")
 
     return dajax.json()
+    
+
+##
+##	Define image in index.html
+##
+@dajaxice_register(method='GET')
+def save_settings(request, width, height, imagesbypage):
+    dajax = Dajax()
+    context.save(width, height, imagesbypage)
+    return dajax.json()
+    
     

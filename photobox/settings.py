@@ -7,8 +7,6 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = True
 
-THUMBNAIL_SIZE = "150x150"
-
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -22,18 +20,18 @@ CACHES = {
 
 MANAGERS = ADMINS
 
-THUMBNAIL_KVSTORE="sorl.thumbnail.kvstores.redis_kvstore.KVStore"
-
+THUMBNAIL_KVSTORE="sorl.thumbnail.kvstores.cached_db_kvstore.KVStore"
+#
 DATABASES = {
-    #'default': {
-     #   'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-      #  'NAME': '',                      # Or path to database file if using sqlite3.
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'database/temp.db',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
        # 'USER': '',
         #'PASSWORD': '',
         #'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
         #'PORT': '',                      # Set to empty string for default.
-    #}
+    }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -144,7 +142,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
+  #  'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',

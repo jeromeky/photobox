@@ -10,33 +10,106 @@ $(document).ready(function(){
 
 
 </script>
-<div style="position:fixed;top:0;z-index:99;width:100%;">
-    <div id="resizer">
-      <ul class="button-list pull-left">
-        <li><a class="modal button" href="/about"><i class="icon-cog"></i></a></li>
-        <li><a title="Settings" href="#setting-modal" ><i class="icon-cog"></i></a></li>
-        <li><a id="editImages" title="Edit" href="#"><i class="icon-pencil"></i></a></li>
-        <li><a title="Refresh" href="#"><i class="icon-refresh"></i></a></li>
-        <li><a title="About" href="#setting-about"><i class="icon-info-sign"></i></a></li>
-      </ul>
-    </div>
+
+<!-- Modal -->
+
+
+<div id="loadingmodal"  class="progress progress-striped active modal hide" style="margin-top:10em;">
+  <div id="loadingbar" class="bar" style="width: 0%;"></div>
+</div>
+
+<div id="modalsettings" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>Settings</h3>
   </div>
-<div class="container">
-  <div class="row">
-    <nav class="one fourth padded" >
-      	<div id="filemenu" class="padded border-right">
-	      	<h3 class="ui-widget-header">Fichiers</h3>
-	      	<div class="list" id="treeViewDiv" ></div>
+  <div class="modal-body">
+	  
+	<form class="form-horizontal">
+		
+	  <div class="control-group">
+	  	<legend>Size</legend>
+	    <label class="control-label" for="inputEmail">Width</label>
+	    <div class="controls">
+	      <input type="number" placeholder="Width" id="width" value="{{thumbnail_width}}">
+	    </div>
+	  </div>
+	  <div class="control-group">
+	    <label class="control-label" for="inputPassword">Height</label>
+	    <div class="controls">
+	      <input type="number" placeholder="Height" id="height" value="{{thumbnail_height}}">
+	    </div>
+	  </div>
+	  	  	<legend>Settings</legend>
+	  <div class="control-group">
+	  		    <label class="control-label" for="inputPassword">Images by page</label>
+	    <div class="controls" id="listimagesbypage">
+	    	<input type="button" class="btn {% if images_by_page == '10' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="10"/>
+	    	<input type="button" class="btn {% if images_by_page == '20' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="20"/>
+	    	<input type="button" class="btn {% if images_by_page == '30' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="30"/>
+	    	<input type="button" class="btn {% if images_by_page == '40' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="40"/>
+	    	<input type="button" class="btn {% if images_by_page == '50' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="50"/>
+	    	<input type="button" class="btn {% if images_by_page == '9999' %} btn-primary {%endif%}" onclick="changeImagesByPage(this)" value="ALL"/>
+	    	<input type="hidden" id="imagesbypage" value="{{images_by_page}}"/>
+	    </div>
+	  </div>
+	</form>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" onclick="save_settings()" data-dismiss="modal" aria-hidden="true"<>Save changes</button>
+  </div>
+</div>
+
+<div id="modalabout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3>About</h3>
+  </div>
+  <div class="modal-body">
+    <p>Photobox</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  	<div class="navbar-inner">
+  		<div class="container-fluid">
+  			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+  				<span class="icon-bar"></span>
+  				<span class="icon-bar"></span>
+  				<span class="icon-bar"></span>
+  			</a>
+  			<a class="brand" href="#">Photobox</a>
+  			<div class="nav-collapse">
+  				<ul class="nav">
+  					<li class="divider-vertical"></li>
+  					<li class="active"><a href="#">Home</a></li>
+  					<li><a href="#modalsettings" role="button" data-toggle="modal">Settings</a></li>
+  					<li><a href="#modalabout" role="button" data-toggle="modal">About</a></li>
+  					<li><a href="#contact">Contact</a></li>
+  				</ul>
+  			</div><!--/.nav-collapse -->
+  		</div>
+  	</div>
+  </div>
+
+
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span3">
+			<div id="filemenu" class="well well-small sidebar-nav sidebar-nav-fixed">
+		      	<h3 class="ui-widget-header">Files</h3>
+		      	<div class="list" id="treeViewDiv" ></div>
+	      	</div>		
+		</div>
+		<div class="span9">
+			<div id="images"></div>
       	</div>
-    </nav>
-    <section class="three fourths padded align-center">
-    	<h1 class="responsive" >Photos</h1>    
-    	<div id="images"></div>
-    </section>
   </div>
-  <footer class="footer align-right">
-    <p>&copy 2013 Photobox</p>
-  </footer>
 </div>
 
 

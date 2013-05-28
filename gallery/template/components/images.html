@@ -1,5 +1,5 @@
 {% load thumbnail %}
-<nav class="pagination">
+<div class="pagination pagination-centered">
 	<ul>
         {% if items.has_previous %}
             <li class="prev"><a href="#" onclick="getImageByPage({{ items.previous_page_number }})">previous</a></li>
@@ -17,14 +17,40 @@
         	<li class="next disabled"><a href="#">next</a></li>
         {% endif %}
     </ul>
-</nav>
+</div>
 <br/>
 
-<div id="galleryImage">
-	{%for path in items.object_list%}
-		{% thumbnail path thumb_size crop="center" as thumb_image %}
-			<a href="{{root_media_path}}{{path}}" class="swipebox"><img src="{{ thumb_image.url }}" width="{{ thumb_image.width }}" height="{{ thumb_image.height }}"/>
-		{% endthumbnail %}
-{%endfor%}
+<div class="row-fluid">
+	<ul id="galleryImage" class="thumbnails">
+		{%for path in items.object_list%}
+			{% thumbnail path thumb_size crop="center" as thumb_image %}
+			<li>
+				<a href="{{root_media_path}}{{path}}" class="swipebox thumbnail"><img src="{{ thumb_image.url }}" alt="" class="img-rounded"></a>
+			</li>
+			{% endthumbnail %}
+		{%endfor%}
+	</ul>
 </div>
+
+<div class="pagination pagination-centered">
+	<ul>
+        {% if items.has_previous %}
+            <li class="prev"><a href="#" onclick="getImageByPage({{ items.previous_page_number }})">previous</a></li>
+        {%else%}
+            <li class="prev disabled"><a href="#">previous</a></li>	
+        {% endif %}
+        {%for page in items.paginator.page_range%}
+			<li class="{%if page == items.number%}active{%endif%} {%if page == 1%}first{%endif%} {%if page == items.paginator.num_pages%}last{%endif%}">
+            	<a href="#" onclick="getImageByPage({{ page }})">{{page}}</a>
+			</li>
+        {%endfor%}
+        {% if items.has_next %}
+            <li class="next"><a href="#" onclick="getImageByPage({{ items.next_page_number }})">next</a></li>
+        {%else%}
+        	<li class="next disabled"><a href="#">next</a></li>
+        {% endif %}
+    </ul>
+</div>
+<br/>
+
  

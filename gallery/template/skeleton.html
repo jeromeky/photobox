@@ -5,7 +5,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-
+<html lang="en">
   <head>
     <title>My App</title>
     {% dajaxice_js_import %}
@@ -16,21 +16,16 @@
         
   </head>
   
-  <body >
-    <div id="container" >
-      <div id="content">
-      
-        {% block content %}
+  <body>
+  {% block content %} 
+  {% endblock %}
+  <script src="/static/js/bootstrap.js"></script>
+<script type="text/javascript" src="/static/js/script.js"></script>
+  <script>
+  $('#loadingmodal').modal({
+backdrop:'static',
+show:false,
 
-        {% endblock %}
-      </div>
-      
-    </div>
-    {% block modal_dialogs %}
-    {% include "modal_dialogs.html" %}
-    {% endblock %}
-
-<script type="text/javascript" src="/static/js/groundwork.all.js"></script>
-
+});</script>
   </body>
 </html>

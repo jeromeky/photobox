@@ -17,7 +17,11 @@ function createFolders(jsonTreeFolders){
 		"json_data" : {
 			"data":jsonTreeFolders
 		},
-		
+		"themes" : {
+			"theme" : "classic",
+			"dots" : true,
+			"icons" : true	
+		},
 		"plugins" : [ "themes", "json_data", "ui" ]
 		}).bind("select_node.jstree", function(e, data){
 			Dajaxice.gallery.define_all_images(Dajax.process, {'pathFolder':jQuery.data(data.rslt.obj[0], "href")});
@@ -57,7 +61,7 @@ function createGalleryThumbnail(data){
 // Fix folders when user scroll
 //
 function fixMenuFolder(){
-	jQuery(function($) {
+/*	jQuery(function($) {
 	    function fixDiv() {
 	      var $cache = $('#filemenu'); 
 	      if ($(window).scrollTop() > 50 && $(window).width() > 800) 
@@ -68,6 +72,11 @@ function fixMenuFolder(){
 	    $(window).scroll(fixDiv);
 	    fixDiv();
 	});
+	*/
+}
+
+function save_settings(){
+    Dajaxice.gallery.save_settings(Dajax.process,{'width':$('#width').val(),'height':$('#height').val(),'imagesbypage':$('#imagesbypage').val()})
 }
 
 //
@@ -85,8 +94,11 @@ function createLoadAjax(){
 function setProgress(data){
 	var obj = jQuery.parseJSON(data);
 	loadajax.setProgress(obj.progress);
+	console.log(obj.progress*100);
 	currentSizeLoadAjax=currentSizeLoadAjax + obj.size;
 	loadajax.setValue(currentSizeLoadAjax + 'Kb');
+	console.log("loadingbar");
+	$("#loadingbar").css( "width", obj.progress*100+'%' );
 }
  
 //
@@ -118,12 +130,26 @@ function clearPageImages(){
 	$("#galleryImage").empty();
 }
 
+function changeImagesByPage(div){
+	$("#listimagesbypage").children().removeClass('btn-primary');
+	$(div).addClass('btn-primary');
+	console.log($(div).val());
+	if($(div).val() == "ALL")
+		$("#imagesbypage").val("9999");
+	else
+		$("#imagesbypage").val($(div).val());
+}
+
 //
 // show/hide the ajax-loader.gif
 //
 function loading(start){
-	if(start)
+	if(start){
 		$("#modalLoading").show();
-	else
+		$('#loadingmodal').modal('show');
+	}else{
 		$("#modalLoading").hide();
+		$('#loadingmodal').modal('hide');
+	}
+		
 } 

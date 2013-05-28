@@ -1,8 +1,8 @@
-/* Start by setting display:none to make this hidden.
-   Then we position it in relation to the viewport window
-   with position:fixed. Width, height, top and left speak
-   speak for themselves. Background we set to 80% white with
-   our animation centered, and no-repeating */
+body{
+	padding-bottom: 40px;
+	padding-top: 60px;
+}
+
 #modalLoading {
     position:   fixed;
     z-index:    1000;
@@ -26,13 +26,43 @@
     margin-top:-100px; /* 669/2 */
 }
 
-#resizer {
-position: fixed;
-top: 0;
-z-index: 99;
-width: 315px;
-left: 50%;
-height: 2em;
-margin: 0 auto;
-margin-left: -100px;
+.list{
+	padding:10px;
+}
+
+.jstree a { white-space:normal !important; height: auto; }
+
+.sidebar-nax{
+	padding:9px 0;
+}
+
+.sidebar-nav-fixed{
+	position: fixed;
+	top:60px;
+	width:22%;
+}
+
+@media(max-width: 767px){
+	.sidebar-nav-fixed{
+		width:auto;
+		position: static;
+	}
+}
+
+@media(max-width: 979 px){
+	.sidebar-nav-fixed{
+		top:70px;
+	}
+}
+
+@media(max-width : 767px){
+	body{
+		padding-top:0;
+	}
+}
+
+@media(max-width : 979px){
+	body{
+		padding-top: 0;
+	}
 }
