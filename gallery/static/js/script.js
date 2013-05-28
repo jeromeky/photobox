@@ -1,13 +1,3 @@
-var loadajax;
-var currentSizeLoadAjax = 0;
-
-$(document).ready(function(){
-	loading(false);
-  	fixMenuFolder();
-	createLoadAjax();	
-	
-});
-
 //
 // Create jstree of folders
 // Need folders list in json
@@ -51,41 +41,17 @@ function getImageByPage(page){
 //
 function createGalleryThumbnail(data){
     var obj = jQuery.parseJSON(data);
-    currentSizeLoadAjax=0;
 	jQuery.each(obj.images, function(index, item) {
 		Dajaxice.gallery.create_thumbnail(Dajax.process, {'pathImage':item, 'cpt' : index+1});
 	});
 
 }
-//
-// Fix folders when user scroll
-//
-function fixMenuFolder(){
-/*	jQuery(function($) {
-	    function fixDiv() {
-	      var $cache = $('#filemenu'); 
-	      if ($(window).scrollTop() > 50 && $(window).width() > 800) 
-	        $cache.css({'position': 'fixed', 'top': '10px'}); 
-	      else
-	        $cache.css({'position': 'relative', 'top': 'auto'});
-	    }
-	    $(window).scroll(fixDiv);
-	    fixDiv();
-	});
-	*/
-}
 
+//
+// Save custom settings
+//
 function save_settings(){
     Dajaxice.gallery.save_settings(Dajax.process,{'width':$('#width').val(),'height':$('#height').val(),'imagesbypage':$('#imagesbypage').val()})
-}
-
-//
-// Create loader percentage
-//
-function createLoadAjax(){
-	loadajax = $("#loading").percentageLoader({
-	     width : 200, height : 200, progress : 0, value: 40 
-     });
 }
 
 //
@@ -93,11 +59,6 @@ function createLoadAjax(){
 //
 function setProgress(data){
 	var obj = jQuery.parseJSON(data);
-	loadajax.setProgress(obj.progress);
-	console.log(obj.progress*100);
-	currentSizeLoadAjax=currentSizeLoadAjax + obj.size;
-	loadajax.setValue(currentSizeLoadAjax + 'Kb');
-	console.log("loadingbar");
 	$("#loadingbar").css( "width", obj.progress*100+'%' );
 }
  
@@ -123,17 +84,11 @@ function clearAllImages(){
 }
 
 //
-// 
 //
-function clearPageImages(){
-	console.log("clear images");
-	$("#galleryImage").empty();
-}
-
+//
 function changeImagesByPage(div){
 	$("#listimagesbypage").children().removeClass('btn-primary');
 	$(div).addClass('btn-primary');
-	console.log($(div).val());
 	if($(div).val() == "ALL")
 		$("#imagesbypage").val("9999");
 	else

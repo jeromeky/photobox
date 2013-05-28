@@ -1,8 +1,13 @@
-photobox
+Photobox
+
 ========
+
 1) Install dajaxice
+
 2) Install solr-thumbnail
+
 3) Install PIL
+
 4) Install memcached (memcached.org) (code.google.com/memcached/wiki)
 	./configure
 	make && make test

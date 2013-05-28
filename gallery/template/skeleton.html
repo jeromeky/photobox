@@ -7,7 +7,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <html lang="en">
   <head>
-    <title>My App</title>
+    <title>Photobox</title>
     {% dajaxice_js_import %}
 
     {% block head %}
@@ -19,13 +19,13 @@
   <body>
   {% block content %} 
   {% endblock %}
-  <script src="/static/js/bootstrap.js"></script>
-<script type="text/javascript" src="/static/js/script.js"></script>
-  <script>
-  $('#loadingmodal').modal({
-backdrop:'static',
-show:false,
 
-});</script>
+  <script type="text/javascript" src="/static/js/script.js"></script>
+  <script>
+	$('#loadingmodal').modal({
+		backdrop:'static',
+		show:false,
+	});
+</script>
   </body>
 </html>
