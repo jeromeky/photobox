@@ -49,7 +49,7 @@ def create_thumbnail(request, pathImage, cpt):
 	#dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
-		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
+		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize(), 'width' : context.width, 'height' : context.height})
 		dajax.assign('#images', 'innerHTML', render)
 		dajax.script("createSwipeImages();")
 		dajax.script("hideModalLoading();")
@@ -73,7 +73,7 @@ def define_images_by_page(request, page):
     except (EmptyPage, InvalidPage):
         items = paginator.page(paginator.num_pages)
 
-    render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
+    render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize(), 'width' : context.width, 'height' : context.height})
     dajax.assign('#images', 'innerHTML', render)
     dajax.script("createSwipeImages();")
 

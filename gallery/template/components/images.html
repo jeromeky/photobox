@@ -25,7 +25,7 @@
 		{%for path in items.object_list%}
 			{#{% thumbnail path thumb_size crop="center" as thumb_image %}#}
 			<li>
-				<a href="{{root_media_path}}{{path}}" class="swipebox thumbnail"><img src="{{root_media_path}}{{path}}" alt="" class="img-rounded"></a>
+				<a href="{{root_media_path}}{{path}}" class="swipebox thumbnail"><img src="{{root_media_path}}{{path}}" alt="" width="{{width}}" height="{{height}}" class="img-rounded"></a>
 			</li>
 			{#{% endthumbnail %}#}
 		{%endfor%}
