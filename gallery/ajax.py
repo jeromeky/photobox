@@ -44,9 +44,9 @@ def define_all_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
-	im = get_thumbnail(pathImage, context.getsize(), crop='center')
-	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
-	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
+	#im = get_thumbnail(pathImage, context.getsize(), crop='center')
+	#size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
+	#dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
 		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
