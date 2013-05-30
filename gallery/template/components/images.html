@@ -23,11 +23,6 @@
 <div class="row-fluid">
 	<ul id="galleryImage" class="thumbnails">
 		{%for path in items.object_list%}
-			{% thumbnail path thumb_size crop="center" as thumb_image %}
-			<li>
-				<a href="{{root_media_path}}{{path}}" class="swipebox thumbnail"><img src="{{ thumb_image.url }}" alt="" class="img-rounded"></a>
-			</li>
-			{% endthumbnail %}
 		{%endfor%}
 	</ul>
 </div>

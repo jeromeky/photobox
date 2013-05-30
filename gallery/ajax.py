@@ -12,6 +12,8 @@ import os.path
 from sorl.thumbnail import get_thumbnail
 from django.core.files.storage import File
 from gallery.views import context
+import os,sys
+import Image
 
 ##
 ## Define all images
@@ -47,6 +49,27 @@ def create_thumbnail(request, pathImage, cpt):
 	im = get_thumbnail(pathImage, context.getsize(), crop='center')
 	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
 	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
+	
+	print "___ create thumbnail ____"
+	size = 128, 128
+	outfile = os.path.splitext(settings.MEDIA_ROOT + pathImage)[0] + "_thumbnail.jpg"
+	if not os.path.exists(outfile):
+		print "not exist"
+		try : 
+			im = Image.open(settings.MEDIA_ROOT + pathImage)
+			im.thumbnail((128, 128), Image.ANTIALIAS)
+			im.save(outfile, "JPEG")
+		except IOError as e: 
+			print "error create file for ", pathImage
+			print e
+			
+	else : 
+		print "exist"
+	
+	print outfile
+	
+	print "___ create thumbnail ____"
+	
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
 		render = render_to_string('components/images.html', {'items' : items, 'root_media_path' : settings.MEDIA_URL, 'thumb_size' : context.getsize()})
