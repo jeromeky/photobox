@@ -73,7 +73,10 @@ MEDIA_ROOT = '/Users/jeromeky/Documents/media/'
 # Examples: "http://example.com/media/", "http://media.example.com/"
 MEDIA_URL = '/media/'
 
+
 MEDIA_IMAGES = MEDIA_ROOT + '/normal/'
+
+MEDIA_THUMBNAIL = MEDIA_ROOT + '/thumbnail/'
 
 
 # Absolute path to the directory static files should be collected to.

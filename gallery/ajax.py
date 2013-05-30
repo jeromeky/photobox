@@ -30,14 +30,19 @@ def define_all_images(request, pathFolder):
 		if(os.path.isfile(loopPath)):
 			fileName, fileExtension = os.path.splitext(loopPath)
 			if(fileExtension.lower() == ".jpg".lower()):
-				thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
-				images.append(thumbnailPath)
+				imagePath = loopPath.replace(settings.MEDIA_IMAGES , "")
+				images.append(imagePath)
 	paginator = Paginator(images, context.imagesbypage)
-	
+	thumbnailPath = pathFolder.replace(settings.MEDIA_IMAGES , settings.MEDIA_THUMBNAIL)
+	if not os.path.isdir(thumbnailPath) :
+		os.makedirs(thumbnailPath)
+		
 	if(len(images)>0):
 		dajax.script("displayModalLoading();")
 		dajax.add_data(simplejson.dumps({'images' : images}), 'createGalleryThumbnail')
-	
+		## Create directory thumbnail if not exist
+		##/Users/jeromeky/Documents/media//normal/2013
+
 	return dajax.json()
     
 ##
@@ -46,17 +51,23 @@ def define_all_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
-	im = get_thumbnail(pathImage, context.getsize(), crop='center')
-	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
-	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
-	
+#	im = get_thumbnail(pathImage, context.getsize(), crop='center')
+#	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
+	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2)}), 'setProgress')
 	print "___ create thumbnail ____"
+	print "path image"
+	print pathImage
 	size = 128, 128
-	outfile = os.path.splitext(settings.MEDIA_ROOT + pathImage)[0] + "_thumbnail.jpg"
+	outfile = settings.MEDIA_THUMBNAIL + pathImage
+	print "outfile"
+	print outfile
+	
+	print "infile"
+	print settings.MEDIA_IMAGES + pathImage
 	if not os.path.exists(outfile):
 		print "not exist"
 		try : 
-			im = Image.open(settings.MEDIA_ROOT + pathImage)
+			im = Image.open(settings.MEDIA_IMAGES + pathImage)
 			im.thumbnail((128, 128), Image.ANTIALIAS)
 			im.save(outfile, "JPEG")
 		except IOError as e: 
@@ -65,8 +76,6 @@ def create_thumbnail(request, pathImage, cpt):
 			
 	else : 
 		print "exist"
-	
-	print outfile
 	
 	print "___ create thumbnail ____"
 	
