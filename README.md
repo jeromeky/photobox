@@ -56,6 +56,12 @@ python manage.py syncdb
 	sudo pip install python-memcached 
 
 
+6) install redis
+
+cd deps
+make hiredis lua jemalloc lineoise
+cd ../
+make
 
 (env2)MacBook-Pro-de-Jerome:photobox jeromeky$ pip list
 distribute (0.6.36)
