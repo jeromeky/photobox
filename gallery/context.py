@@ -7,9 +7,9 @@ class Context:
 	LABEL_HEIGHT = "height"
 	LABEL_IMAGES_BY_PAGE = "images_by_page"
 	
-	width = "200"
-	height = "200"
-	imagesbypage = "20"
+	width = 200
+	height = 200
+	imagesbypage = 20
 	xmlpath = ""
 
 	
@@ -72,13 +72,13 @@ class Context:
 		
 		xmlSettings = parse(self.xmlpath)
 	
-		xmlSettings.getElementsByTagName(self.LABEL_WIDTH)[0].firstChild.nodeValue = width
-		xmlSettings.getElementsByTagName(self.LABEL_HEIGHT)[0].firstChild.nodeValue = height
-		xmlSettings.getElementsByTagName(self.LABEL_IMAGES_BY_PAGE)[0].firstChild.nodeValue = imagesbypage
+		xmlSettings.getElementsByTagName(self.LABEL_WIDTH)[0].firstChild.nodeValue = str(width)
+		xmlSettings.getElementsByTagName(self.LABEL_HEIGHT)[0].firstChild.nodeValue = str(height)
+		xmlSettings.getElementsByTagName(self.LABEL_IMAGES_BY_PAGE)[0].firstChild.nodeValue = str(imagesbypage)
 		
 		f = open(self.xmlpath, "w")
 		xmlSettings.writexml(f)
 		f.close()
 	
 	def getsize(self):
-		return self.width + "x" + self.height
+		return str(self.width) + "x" + str(self.height)
