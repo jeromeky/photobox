@@ -54,10 +54,11 @@ def create_thumbnail(request, pathImage, cpt):
 	outfile = os.path.join(settings.MEDIA_THUMBNAIL,  context.getsize(), pathImage,)
 
 	if not os.path.exists(outfile):
-		try : 
+		try :
+			print "new thumbnail" 
 			im = Image.open(settings.MEDIA_IMAGES + pathImage)
-			#im.thumbnail([int(context.width), int(context.height)], Image.ANTIALIAS)
-			im = ImageOps.fit(im, (int(context.width), int(context.height)), Image.ANTIALIAS)
+			im.thumbnail([int(context.width), int(context.height)], Image.ANTIALIAS)
+			#im = ImageOps.fit(im, (int(context.width), int(context.height)), Image.ANTIALIAS)
 			im.save(outfile, "JPEG", quality = 50)
 		except IOError as e: 
 			print "error create file for ", pathImage
