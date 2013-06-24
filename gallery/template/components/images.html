@@ -19,6 +19,9 @@
     </ul>
 </div>
 <br/>
+{% load cache %}
+{% cache 500 images %}
+
 
 <div class="row-fluid">
 	<ul id="galleryImage" class="thumbnails">
@@ -29,7 +32,7 @@
 		{%endfor%}
 	</ul>
 </div>
-
+{% endcache %}
 <div class="pagination pagination-centered">
 	<ul>
         {% if items.has_previous %}
