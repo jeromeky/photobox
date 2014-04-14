@@ -29,7 +29,8 @@ def define_all_images(request, pathFolder):
 	global paginator
 	print context.width
 	images = []
-	for loopPath in glob.glob(pathFolder + '/*'):
+	imagesPath = sorted(glob.glob(pathFolder + '/*'))
+	for loopPath in imagesPath:
 		if(os.path.isfile(loopPath)):
 			fileName, fileExtension = os.path.splitext(loopPath)
 			if(fileExtension.lower() == ".jpg".lower()):
