@@ -1,2 +1,3 @@
 *.pyc
 gallery/media/
+photobox/settings.py
