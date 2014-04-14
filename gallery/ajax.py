@@ -5,13 +5,18 @@ from dajaxice.decorators import dajaxice_register
 from dajax.core import Dajax
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from django.conf import settings
-from collections import OrderedDict
+try:
+	from collections import OrderedDict
+except ImportError:
+	from ordereddict import OrderedDict
 from django.template.loader import render_to_string
 import glob
 import os.path
 from sorl.thumbnail import get_thumbnail
 from django.core.files.storage import File
 from gallery.views import context
+
+paginator = []
 
 ##
 ## Define all images
@@ -46,6 +51,8 @@ def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
 	im = get_thumbnail(pathImage, context.getsize(), crop='center')
 	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
+	progress = round(float(cpt)/float(paginator.count),2)
+	print progress
 	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
 	if(paginator.count == cpt):
 		items = paginator.page(1)	

@@ -39,6 +39,8 @@ sudo rm -rf /tmp
 
 python manage.py syncdb
 
+PYTHONPATH=~/modules easy_install-2.6 --install-dir ~/modules pip install python-memcached
+
 4) Install memcached (memcached.org) (http://memcached.org/) (https://code.google.com/p/memcached/wiki/NewStart)
 	./configure
 	make && make test
