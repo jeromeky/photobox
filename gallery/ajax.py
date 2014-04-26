@@ -28,7 +28,8 @@ def define_all_images(request, pathFolder):
 	dajax.script("clearAllImages();")
 	global paginator
 	images = []
-	for loopPath in glob.glob(pathFolder + '/*'):
+	imagesPath = sorted(glob.glob(pathFolder + '/*'))
+	for loopPath in imagesPath:
 		if(os.path.isfile(loopPath)):
 			fileName, fileExtension = os.path.splitext(loopPath)
 			if(fileExtension.lower() == ".jpg".lower() or fileExtension.lower() == ".jpeg".lower() or fileExtension.lower() == ".png".lower() or fileExtension.lower() == ".gif".lower()):
