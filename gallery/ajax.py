@@ -27,12 +27,11 @@ def define_all_images(request, pathFolder):
 	dajax.add_data(simplejson.dumps({'progress':0}), 'setProgress')	
 	dajax.script("clearAllImages();")
 	global paginator
-	print context.width
 	images = []
 	for loopPath in glob.glob(pathFolder + '/*'):
 		if(os.path.isfile(loopPath)):
 			fileName, fileExtension = os.path.splitext(loopPath)
-			if(fileExtension.lower() == ".jpg".lower()):
+			if(fileExtension.lower() == ".jpg".lower() or fileExtension.lower() == ".jpeg".lower() or fileExtension.lower() == ".png".lower() or fileExtension.lower() == ".gif".lower()):
 				thumbnailPath = loopPath.replace(settings.MEDIA_ROOT + "/", "")
 				images.append(thumbnailPath)
 	paginator = Paginator(images, context.imagesbypage)
@@ -52,7 +51,6 @@ def create_thumbnail(request, pathImage, cpt):
 	im = get_thumbnail(pathImage, context.getsize(), crop='center')
 	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
 	progress = round(float(cpt)/float(paginator.count),2)
-	print progress
 	dajax.add_data(simplejson.dumps({'progress':round(float(cpt)/paginator.count,2), 'size' : size}), 'setProgress')
 	if(paginator.count == cpt):
 		items = paginator.page(1)	
