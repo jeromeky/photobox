@@ -124,6 +124,9 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+
 ROOT_URLCONF = 'photobox.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
