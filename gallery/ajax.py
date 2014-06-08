@@ -45,7 +45,7 @@ def define_all_images(request, pathFolder):
 @dajaxice_register(method='GET')
 def create_thumbnail(request, pathImage, cpt):
 	dajax = Dajax()
-	request.session['paginator']
+	paginator = request.session['paginator']
 	im = get_thumbnail(pathImage, context.getsize(), crop='center')
 	size = os.path.getsize(settings.MEDIA_ROOT + im.url.replace("/media/", ""))/1000
 	progress = round(float(cpt)/float(paginator.count),2)
