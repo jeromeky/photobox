@@ -33,7 +33,6 @@ def searchFolder(path):
 	folders = {};
 	for loopPath in glob.glob(path + '/*'):
 		if(os.path.isdir(loopPath)):
-			#keyPath = loopPath.replace(path, '')
 			folders[loopPath] = searchFolder(loopPath);
 			
 	if(len(folders) == 0):
